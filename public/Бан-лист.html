@@ -1,0 +1,26 @@
+<a href='#' class='closeWindow' onclick='closeTab(); return false' style='float: right; margin-bottom: 10px;'><span style='font-size: xx-large; right: -30px' class="glyphicon glyphicon-remove-circle"></span></a><br>
+<h3 class='text-center'>Забаненные</h3>
+       <div class="row">
+            <form action="" class="search-form" id='searchBanned'>
+                <div class="form-group has-feedback">
+            		<label for="search" class="sr-only">Search</label>
+            		<input type="text" class="form-control" name="search" id="search" placeholder="search" value="@">
+              		<span class="glyphicon glyphicon-search form-control-feedback"></span>
+            	</div>
+            </form>
+    </div>
+<ul class="pagination">
+  <li class="active"><a href="#" class='banListPage' onclick='askForBanList($(this)); return false;'>1</a></li>
+</ul>
+<ul id='banListItems'>
+	
+</ul>
+<script>
+	socket.emit('banListPaginationNeeded');
+	socket.emit('banListNeeded', 1);
+	$("#searchBanned").submit(function(e){
+		var nickToSearch = $("#search").val();
+		socket.emit('searchBanned', nickToSearch);
+	return false;
+});
+</script>

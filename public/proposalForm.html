@@ -1,0 +1,18 @@
+<form id="proposalForm" class="form-inline" action="/" method="post" style=' display: none;'>
+   <div class="form-group">
+    <div class="col-sm-10">
+      <input type="text" class="form-control" id="inputPropose1" placeholder="MC слева" maxlength="40" onchange='checkProposeForSymbols();' required>
+    </div>
+  </div>
+  <div class="form-group">
+    <div class="col-sm-10">
+      <input type="text" class="form-control" id="inputPropose2" placeholder="МС справа" maxlength="40" onchange='checkProposeForSymbols();' required>
+    </div>
+  </div>
+  <div class="form-group">
+    <div class="col-sm-offset-2 col-sm-10">
+		<input class="btn btn-primary" type="submit" value="Предложить"></input>
+	</div>
+ </div>
+</form>
+<script src="/proposalFormScript.js"></script>

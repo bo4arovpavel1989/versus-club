@@ -1,0 +1,33 @@
+<form action="/upload" class="form-horizontal" enctype="multipart/form-data" method="post">
+	<div class="form-group">
+		<input type="text" id="inputNewsTitle" class="form-control" size="40" name="title" placeholder = "Заголовок"><br>
+	</div>
+	<div class="form-group">
+		<textarea rows="10" class="form-control" name="body" placeholder="Содержание новости"></textarea></br>
+	</div>
+	<div class="form-group" style='display: none;'>
+	<div class="col-sm-offset-2 col-sm-10">
+		<input id="loginfornews" type="text" class="form-control" name="login" readonly><br>
+	</div>
+	</div>
+	<div class="form-group" style='display: none;'>
+	<div class="col-sm-offset-2 col-sm-10">
+		<input id="sessionfornews" type="text" class="form-control" name="session" readonly><br>
+	</div>
+	</div>
+	<div class="form-group">
+		<input type="file" name="upload" accept="image/jpeg"><br>
+	</div>
+	<div class="form-group">
+		<input class="btn btn-primary" type="submit" value="Загрузить">
+	</div>
+ </form>
+ <script>
+ $('#inputNewsTitle').keypress(function(key) { /*protect from symbols ' and " in username, because it caueses troubles*/
+        if(key.charCode < 48 && key.charCode > 33 ) {
+			return false;
+		}
+    });
+	$('#sessionfornews').val(document.cookie);
+	$('#loginfornews').val(userData.login);
+ </script>

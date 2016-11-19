@@ -1,0 +1,28 @@
+<div class="container" id="masterWindow" style='display: none;'>
+<form id="makeEditorForm" class="form-horizontal" action="/" method="post">
+	<p>Добавить/удалить редактора</p>
+   <div class="form-group">
+	<div class="input-group">
+	 <div class="input-group-addon">@</div>
+      <input type="message" class="form-control" id="nameEditor" placeholder="Editor" required>
+	  </div>
+  </div>
+  <div class="form-group">
+		<input class="btn btn-primary" type="submit" value="Сделать"></input>
+ </div>
+</form>
+<form id="makeModeratorForm" class="form-horizontal" action="/" method="post">
+	<p>Добавить/удалить модератора</p>
+   <div class="form-group">
+   <div class="input-group">
+	 <div class="input-group-addon">@</div>
+      <input type="message" class="form-control" id="nameModerator" placeholder="Moderator" required>
+  </div>
+  </div>
+  <div class="form-group">
+		<input class="btn btn-primary" type="submit" value="Сделать"></input>
+ </div>
+</form>
+<a href='#' onclick=' minimizeMasWin($(this)); return false;' id='minimizeMasWindow' style='float: right; color: white;'>Закрыть</a>
+</div>
+<script src="/masterwindow.js"></script>

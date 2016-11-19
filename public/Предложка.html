@@ -1,0 +1,18 @@
+﻿<a href='#' id='clearPropose' onclick='clearPropose(); return false'>Очистить предложку</a>
+<a href='#' class='closeWindow' onclick='closeTab(); return false' style='float: right; margin-bottom: 10px;'><span style='font-size: xx-large; right: -30px' class="glyphicon glyphicon-remove-circle"></span></a><br><br>
+<h3 class='text-center'>Кого хочет увидеть народ?</h3>
+<a href="#" onclick='$(this).next().show(); return false;' style="color: grey; font-size: large;"><span class='glyphicon glyphicon-question-sign'></span></a>
+<div class="alert alert-warning" style="display: none;">
+  <strong>Внимание!</strong> В этои разделе активный пользователь портала может предложить пару для баттла для дальнейшего голосования. Если пара уже пристуствует, то просто плюсани ее. Добавившие посторонний текст (реклама, смищные шутеечки, троллинг) будут забанены!.
+</div>
+<br>
+<div id="propose">
+	<div id="contentToPropose">
+	</div>
+	<div id="proposalItems">
+	</div>
+	<div>
+	<a href='#' class="btn btn-primary"  onclick="$('#proposalItems').empty(); socket.emit('proposeNeeded'); window.scroll(0 ,0); return false" >Дальше</a>
+	</div>
+</div>
+<script src="/propose.js"></script>

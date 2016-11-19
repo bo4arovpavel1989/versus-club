@@ -1,0 +1,98 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+ <meta charset="utf-8">
+<link rel="stylesheet" type="text/css" href="bootstrap.min.css" />
+</head>
+<body>
+<div class="container">
+	<h1 class="text-center">Versus-club-options</h1>
+</div>
+<div class="container">
+<form id="changeUserDataForm" class="form-horizontal" action="/" method="post">
+<div class="col-sm-offset-2 col-sm-10">
+	<h2>Изменение пароля</h2>
+	</div>
+   <div class="form-group">
+    <label for="inputLogin" class="col-sm-2 control-label">Старый пароль</label>
+    <div class="col-sm-10">
+      <input type="password" class="form-control" id="inputOldPass" placeholder="Old Password" required>
+    </div>
+  </div>
+  <div class="form-group">
+    <label for="inputPassword" class="col-sm-2 control-label">Новый Пароль</label>
+    <div class="col-sm-10">
+      <input type="password" class="form-control" id="inputPasswordChange1" placeholder="Password" required>
+    </div>
+  </div>
+  <div class="form-group">
+    <label for="inputPassword" class="col-sm-2 control-label">Повторите пароль</label>
+    <div class="col-sm-10">
+      <input type="password" class="form-control" id="inputPasswordChange2" placeholder="Password" onchange="checkPasswords()" required>
+    </div>
+  </div>
+  <div class="form-group">
+    <div class="col-sm-offset-2 col-sm-10">
+		<input class="btn btn-primary" type="submit" value="Сохранить"></button>
+	</div>
+ </div>
+</form>
+<form id="changeUserEmailForm" class="form-horizontal" action="/" method="post">
+<div class="col-sm-offset-2 col-sm-10">
+	<h2>Изменение привязанной электронки</h2>
+	</div>
+   <div class="form-group">
+    <label for="inputNewEmail" class="col-sm-2 control-label">Введите новый адрес</label>
+    <div class="col-sm-10">
+      <input type="email" class="form-control" id="inputNewEmail" placeholder="E-Mail" required>
+    </div>
+  </div>
+  <div class="form-group">
+    <div class="col-sm-offset-2 col-sm-10">
+		<input class="btn btn-primary" type="submit" value="Сохранить"></button>
+	</div>
+ </div>
+</form>
+<form action="/uploadavatar" id='uploadAvatar' class="form-horizontal" enctype="multipart/form-data" method="post">
+<div class="col-sm-offset-2 col-sm-10">
+	<h2>Загрузка аватара</h2>
+	<div class="alert alert-warning">
+		<strong>Внимание!</strong> Размер загружаемой аватарки не должен превышать 100кБ. формат изображения - JPG</div>
+		</div>
+	<div class="form-group" style='display: none;'>
+	<div class="col-sm-offset-2 col-sm-10">
+		<input id="loginforavatar" type="text" class="form-control" name="login" readonly><br>
+	</div>
+	</div>
+	<div class="form-group" style='display: none;'>
+	<div class="col-sm-offset-2 col-sm-10">
+		<input id="sessionforavatar" type="text" class="form-control" name="session" readonly><br>
+	</div>
+	</div>
+	<div class="form-group">
+		<div class="col-sm-offset-2 col-sm-10" style='color: white;'>
+			<input type="file" class="btn btn-primary" name="upload" accept="image/jpeg"><br>
+		</div>
+		<div class="col-sm-offset-2 col-sm-10">
+		<div class="progress" style='display: none;'>
+			<div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="display: none; color: white;"></div>
+		</div>
+		</div>
+	</div>
+	<div class="form-group">
+	<div class="col-sm-offset-2 col-sm-10">
+		<input class="btn btn-primary" type="submit" value="Загрузить">
+	</div>
+	</div>
+ </form>
+</div>
+	<script src="/jquery2.js"></script>
+	<script src="/socket.io.js"></script>
+	<script src="/app.js"></script>
+	<script src='/options.js'></script>
+	<script>
+		$('#sessionforavatar').val(document.cookie);
+	</script>
+</html>
+</body>
