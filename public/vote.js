@@ -23,7 +23,7 @@ if(userData.isEditor) {
 
 function clearVote() {
 	var confirmAction = confirm('Уверен?');
-	var verificationInfo = {login: userData.login, session: document.cookie};
+	var verificationInfo = {_id: userData._id, session: document.cookie, login: userData.login};
 	if(confirmAction) {
 		socket.emit('clearvote', verificationInfo);
 		confirmAction = confirm('Создать новое голосование?');
@@ -39,7 +39,7 @@ function changeVote() {
 	var battle2 = prompt("Второй вариант", 'no battle');
 	var battle3 = prompt("Третий вариант", 'no battle');
 	var battlers = {first: battle1, second: battle2, third: battle3};
-	var verificationInfo = {login: userData.login, session: document.cookie};
+	var verificationInfo = {_id: userData._id, session: document.cookie, login: userData.login};
 	socket.emit('changeVote', battlers, verificationInfo);
 	location.reload();
 }
@@ -47,7 +47,7 @@ function changeVote() {
 $("#voteForm").submit(function(e){
 	var a = $('input[name="vote"]:checked').val();
 	console.log(a);
-	var voteData = {votedLogin: userData.login, vote: a, session: document.cookie};
+	var voteData = {votedLogin: userData.login, vote: a, session: document.cookie, _id: userData._id};
 	console.log(voteData);
 	socket.emit('vote', voteData);
 	$("#voteForm").hide();

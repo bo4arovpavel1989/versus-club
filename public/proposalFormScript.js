@@ -3,7 +3,7 @@ $("#proposalForm").submit(function(e){
 	if (!userData.isBanned) {
 		var propose1 = $("#inputPropose1").val();
 		var propose2 = $("#inputPropose2").val();
-		var proposalData = {login: userData.login, propose1: propose1, propose2: propose2, session: document.cookie};
+		var proposalData = {login: userData.login, _id: userData._id, propose1: propose1, propose2: propose2, session: document.cookie};
 		socket.emit('proposeUpload', proposalData);
 		$("#inputPropose1").val('');
 		$("#inputPropose2").val('');
@@ -22,7 +22,7 @@ function likePropose(clickedPropose) {
 		if (loggedIn && !userData.isBanned) { /*если авторизован и не забанен то можешь плюсовать*/
 			/*screenPosition = window.pageYOffset; старая версия - возврат к положению на странице после перезагрузки*/
 			var proposeItself = clickedPropose.parent().attr("data-propose");
-			var proposePlusData = {login: userData.login, propose: proposeItself, session: document.cookie};
+			var proposePlusData = {login: userData.login, _id: userData._id, propose: proposeItself, session: document.cookie};
 			socket.emit('proposePlused', proposePlusData);
 			/*$('#proposalItems').empty();
 			socket.emit("proposeNeeded");  экранировал старый вариант, чтоб не обновлял список предложек*/

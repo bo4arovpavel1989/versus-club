@@ -4,43 +4,59 @@ var redisClient = redis.createClient();
 var https = require('https');
 var formidable = require('formidable');
 var easyimg = require('easyimage');
+var Userschema = require('./mongoSchema.js');
+var Newsschema = require('./newsMongoSchema.js');
+
+
+
 /*функции проверки пользователя*/
-var simpleVerificate = function (login, session,callback){
+var simpleVerificate = function (id, session,callback){
 	var reply;
-	var userDataKey = 'userKey' + login.toUpperCase();
-	redisClient.hget('session', session, function(err, rep){
-		if (rep == userDataKey) {
-			console.log('verificate ok');
-			reply = true;
-			callback(reply);
-		} else {
-			console.log('no verificate');
-			reply = false;
-			callback(reply);
+	Userschema.findOne({_id: id}, 'session', function (err, person) {
+		console.log(person);
+		if (person !== null) {
+			try {
+				if (person.session == session && person.session != 0) {
+					console.log('verificate ok');
+					reply = true;
+					callback(reply);
+				} else {
+					console.log('no verificate');
+					reply = false;
+					callback(reply);
+				}	
+			} catch (e) {}
 		}
 	});
 };
 
-var verificate = function (login, session, isMighty, callback) { /*верификация сесии с проверками прав*/
+var verificate = function (id, session, isMighty, callback) { /*верификация сесии с проверками прав*/
 	var reply;
-	var userDataKey = 'userKey' + login.toUpperCase();
-	redisClient.hget('session', session, function(err, rep){
-		if (rep == userDataKey) {
-			redisClient.hget(userDataKey, isMighty, function(err, rep2){
-				if (rep2 == 'true') {
-					console.log('proceeding');
-					reply = true;
-					callback(reply);
+	Userschema.findOne({_id: id}, 'session isEditor', function (err, person) {
+		console.log(person);
+			if (person !== null) {
+			try {
+				if (person.session == session  && person.session != 0) {
+					console.log('verificate ok');
+					Userschema.findOne({_id: id}, isMighty, function(err, person2){
+						if (person2 !== null) {
+							if (person2[isMighty] == true) {
+								console.log('proceeding');
+								reply = true;
+								callback(reply);
+							} else {
+								console.log('no rights');
+								reply = false;
+								callback(reply);
+							}
+						}
+					});
 				} else {
-					console.log('no rights');
+					console.log('no verificate');
 					reply = false;
 					callback(reply);
-				}
-			});
-		} else {
-			console.log('no verificate');
-			reply = false;
-			callback(reply);
+				}	
+			} catch (e) {}
 		}
 	});
 };
@@ -96,7 +112,7 @@ var verifyRecaptcha = function (key, callback) {
 };
 
 var uploadAvatar = function(req, res){
-	var form = new formidable.IncomingForm();
+			var form = new formidable.IncomingForm();
 			form.uploadDir =__dirname + '/public/avatars';
 			form.keepExtensions = false;
 			form.type = 'multipart/form-data';
@@ -111,16 +127,17 @@ var uploadAvatar = function(req, res){
 				if (err) {
 					res.redirect('/options');
 				}
-				var avatarLogin = fields.login;
+				var idLogin = fields.id;
 				var session = fields.session;
-				simpleVerificate(avatarLogin, session, function(rep){
+				 console.log(idLogin);
+				simpleVerificate(idLogin, session, function(rep){
+						console.log(rep);
 						if (rep) {
-						console.log(avatarLogin);
-						var fileName = __dirname + '/public/avatars/' + avatarLogin + '.jpeg';
+						var fileName = __dirname + '/public/avatars/' + idLogin + '.jpeg';
 					/*переименовываем имя файла картинки согласно схеме - имя пользвателя*/
 						try {
 						fs.stat(files.upload.path, function(err, stats){
-							console.log(stats.size);
+							console.log(1 + stats.size);
 							if (stats.size < 100000) {
 								console.log('now resizing');
 									easyimg.resize({src: files.upload.path, dst: fileName, width:40, height:40}, function(err, stdout, stderr) {
@@ -135,6 +152,7 @@ var uploadAvatar = function(req, res){
 									}).then(
 											function(img) {
 												console.log('Resized: ' + img.width + ' x ' + img.height);
+												Userschema.update({'_id': idLogin}, {$set: {avatarUrl: '/avatars/' + idLogin + '.jpeg'}}).exec();
 												fs.unlink(files.upload.path, function(err){
 													console.log("Done resizing, source delete");
 													res.redirect('/');
@@ -163,7 +181,8 @@ var uploadAvatar = function(req, res){
 };
 
 var uploadNews = function(req, res){
-	var form = new formidable.IncomingForm();
+			console.log(111);
+			var form = new formidable.IncomingForm();
 			form.uploadDir =__dirname + '/public/images';
 			form.keepExtensions = false;
 			form.type = 'multipart/form-data';
@@ -180,19 +199,18 @@ var uploadNews = function(req, res){
 					newsDate = formatDate(newsDate);
 					var newsTitle = fields.title;
 					var newsBody = fields.body;
-					var newsLogin = fields.login;
+					var newsAuthorId = fields.id;
 					var session = fields.session;
-					verificate(newsLogin, session, 'isEditor', function(rep) {
+					verificate(newsAuthorId, session, 'isEditor', function(rep) {
 						if (rep) {
-							var fileName = __dirname + '/public/images/newsID-' + newsDate;
 							redisClient.incr('currentNewsID', function(err, newsID){
-								var fileNameKey = 'newsKey' + newsDate + newsID; /*Сохраняем переменную как уникальный ключ для конкретной новости*/
-								redisClient.lpush('newsTitles', fileNameKey); /*сохраняем уникальны ключ новости в архив, чтоб потом по запросы выводить их все*/
-								redisClient.hset(fileNameKey, 'title', newsTitle); /*сохраняем новость по уникальному ключу*/
-								redisClient.hset(fileNameKey, 'body', newsBody);
-								redisClient.hset(fileNameKey, 'date', newsDate);
-								redisClient.hset(fileNameKey, 'newskey', fileNameKey);
-								easyimg.resize({src: files.upload.path, dst: fileName + newsID + '.jpeg', width:600, height:600}, function(err, stdout, stderr) { /*resize and переименовываем имя файла картинки согласно схеме - дата + заголоовк новостиё*/
+								var fileName = __dirname + '/public/images/newsID-' + newsDate + newsID + '.jpeg'; /*сохраняем абсолютный путь файла*/
+								var fileNameForHTML = '/images/newsID-' + newsDate + newsID + '.jpeg'; /*Сохраняем имя файла картинки в том виде, в каком потом вставим в html*/
+								var addNews = new Newsschema({title: newsTitle, body: newsBody, date: newsDate, img: fileNameForHTML});
+								addNews.save(function(err, result){
+									console.log(result);
+								});
+								easyimg.resize({src: files.upload.path, dst: fileName, width:600, height:600}, function(err, stdout, stderr) { /*resize and переименовываем имя файла картинки согласно схеме - дата + заголоовк новостиё*/
 											console.log('wait for resize result');
 											if (err) {
 												console.log("Error loading news");
@@ -201,36 +219,32 @@ var uploadNews = function(req, res){
 													console.log("Error loading news");
 												});
 											} 
-										}).then(
-												function(img) {
-													console.log('Resized: ' + img.width + ' x ' + img.height);
-													fs.unlink(files.upload.path, function(err){
-														console.log("Done resizing, source delete");
-														var fileNameForHTML = '/images/newsID-' + newsDate + newsID + '.jpeg'; /*Сохраняем имя файла картинки в том виде, в каком потом вставим в html*/
-														redisClient.hset(fileNameKey, 'img', fileNameForHTML);
-													});
-												},
-												function (err) {
-													console.log(err);
-													fs.unlink(files.upload.path, function(err){
-														console.log("Error resizing, source delete");
-													});
-												}
+								}).then(
+									function(img) {
+										console.log('Resized: ' + img.width + ' x ' + img.height);
+										fs.unlink(files.upload.path, function(err){
+											console.log("Done resizing, source delete");
+										});
+									},
+									function (err) {
+										console.log(err);
+										fs.unlink(files.upload.path, function(err){
+											console.log("Error resizing, source delete");
+										});
+									}
 								);
 							});
 						}
 					});
 				});
 			} catch(e) {
-				console.log(e);
 				writeLog(e);
 			}
 			res.redirect('/');
 };
 
 var registerMe = function(req, res){
-	verifyRecaptcha(req.body["g-recaptcha-response"], function(success) {
-					if (success) {
+							/*потом сюда не забыть вернуть проверку капчи*/
 							console.log(req.body['login']);
 							console.log(req.body['password']);
 							console.log(req.body['email']);
@@ -241,21 +255,19 @@ var registerMe = function(req, res){
 								var loginKey = "@" + req.body['login'].toUpperCase();
 								redisClient.sadd(['originalLogins', loginKey], function(err, rep){
 									if (rep == 1) { /*логин не занят, т.е. еще не присутствует в массиве оригинальных логинов*/
-										var userDataKey = 'userKey' + loginKey; /*создаем ключ для базы пльзовательских данных*/
 										redisClient.sadd(['originalEmails', req.body['email']], function(err, rep2){ /*Email не занят, т.е. еще не присутствует в массиве оригинальных логинов*/
 											if (rep2 == 1) {
-												redisClient.hset(userDataKey, 'login', login); /*пишем пользовательские данные по ключу*/
-												redisClient.hset(userDataKey, 'password', req.body['password']);
-												redisClient.hset(userDataKey, 'email', req.body['email']);
-												redisClient.hset(userDataKey, 'isModerator', false);
-												redisClient.hset(userDataKey, 'isBanned', false);
-												redisClient.hset(userDataKey, 'isEditor', false);
-												redisClient.hset(userDataKey, 'activity', 0);
-												redisClient.hset('userEmail', req.body['email'], userDataKey);			
-												fs.copy(__dirname + '/public/avatars/no-ava-1.jpeg', __dirname + '/public/avatars/' + login + '.jpeg');
+												var userAdd = new Userschema({loginUpperCase: loginKey, login: login, password: req.body['password'], email: req.body['email']});
+												userAdd.save(function(err2, result) {
+													if(err2)
+														res.end(err2);
+													else {
+														console.log(result);
+													}
+												});
 													res.redirect('/');
 											} else {
-												redisClient.srem('originalLogins', loginKey, function(err, rep){
+													redisClient.srem('originalLogins', loginKey, function(err, rep){
 													res.end("E-Mail is not available");
 												});
 											}
@@ -267,14 +279,9 @@ var registerMe = function(req, res){
 									} 
 								});
 							} else {
-								res.end("Login is unvalid. Login shouldnt contain symbols: \" \'");
-							}
-					} else {
-							res.end("Captcha failed, sorry.");
-							// TODO: take them back to the previous page
-							// and for the love of everyone, restore their inputs
-					}
-	});
+							res.end("Login is unvalid. Login shouldnt contain symbols: \" \'"); }
+					
+	
 };
 
 

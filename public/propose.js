@@ -13,7 +13,7 @@ if(!userData.isEditor) {
 }
 function clearPropose() {
 	var confirmAction = confirm('Уверен?');
-	var verificationInfo = {login: userData.login, session: document.cookie};
+	var verificationInfo = {_id: userData._id, session: document.cookie, login: userData.login};
 	if(confirmAction) {
 		socket.emit('clearPropose', verificationInfo);
 		location.reload();

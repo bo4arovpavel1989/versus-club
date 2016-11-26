@@ -62,7 +62,7 @@
 		</div>
 	<div class="form-group" style='display: none;'>
 	<div class="col-sm-offset-2 col-sm-10">
-		<input id="loginforavatar" type="text" class="form-control" name="login" readonly><br>
+		<input id="idforavatar" type="text" class="form-control" name="id" readonly><br>
 	</div>
 	</div>
 	<div class="form-group" style='display: none;'>
@@ -92,7 +92,10 @@
 	<script src="/app.js"></script>
 	<script src='/options.js'></script>
 	<script>
-		$('#sessionforavatar').val(document.cookie);
+		socket.on('takeData', function(data){
+			$('#sessionforavatar').val(document.cookie);
+			$('#idforavatar').val(userData._id);
+		});
 	</script>
 </html>
 </body>

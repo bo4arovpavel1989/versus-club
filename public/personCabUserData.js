@@ -36,12 +36,12 @@ $(document).ready(function() {
 socket.on('messageSentRealTime', function(data, data2){   /*разделил прием сообщения из архива и в реальном времени, т.к. они располагаются в разном порядке. В реальном добавляются ПЕРЕД существующими*/
 if (!userData.isModerator) {
 	$("#messagesReceived").prepend("<li class = 'message' ><div class=\'messagenick\'><a href='#' data-login=\'" + data.messageNick + "\' onclick=\'appealTo($(this)); return false\' class=\'appealTo\'>" + data.messageNick + "</a>:</div>" +
-	"<div class=\'avatarMessage\' style=\"background-image: url(\'\avatars\/" + data.messageNick + ".jpeg\');\"></div>" +
+	"<div class=\'avatarMessage\' style=\"background-image: url(" + data.avatarUrl + ");\"></div>" +
 	"<blockquote class=\'messagebody\'>" + data.message + "</blockquote></li>");
 	} else {
 		$("#messagesReceived").prepend("<li class = 'message' data-messagenick=\'" + data.messageNick + "\' data-messageID=\'" + data2 + "\'>" + 
 		"<div class=\'messagenick\'><a href='#' data-login=\'" + data.messageNick + "\' onclick=\'appealTo($(this)); return false\' class=\'appealTo\'>" + data.messageNick + "</a>:</div>" +
-		"<div class=\'avatarMessage\' style=\"background-image: url(\'\avatars\/" + data.messageNick + ".jpeg\');\"></div>" +
+		"<div class=\'avatarMessage\' style=\"background-image: url(" + data.avatarUrl + ");\"></div>" +
 		"<blockquote class=\'messagebody\'>" + data.message + "</blockquote></li>" + 
 		"<a href='#' class='deleteMessage' onclick=\'deleteMessage($(this)); return false;\'>удалить </a>" + 
 		"<a href='#' class='banAuthor' onclick=\'banAuthor($(this)); return false;\'> бан/разбан</a>");
@@ -54,12 +54,12 @@ if (!userData.isModerator) {
 socket.on('messageSent', function(data, data2){ /*принимаем сообщения (архив) от сервера*/
 	if (!userData.isModerator) {
 	$("#messagesReceived").append("<li class = 'message' ><div class=\'messagenick\'><a href='#' data-login=\'" + data.messageNick + "\' onclick=\'appealTo($(this)); return false\' class=\'appealTo\'>" + data.messageNick + "</a>:</div>" +
-	"<div class=\'avatarMessage\' style=\"background-image: url(\'\avatars\/" + data.messageNick + ".jpeg\');\"></div>" +
+	"<div class=\'avatarMessage\' style=\"background-image: url(" + data.avatarUrl + ");\"></div>" +
 	"<blockquote class=\'messagebody\'>" + data.message + "</blockquote></li>");
 	} else {
 		$("#messagesReceived").append("<li class = 'message' data-messagenick=\'" + data.messageNick + "\' data-messageID=\'" + data2 + "\'>" + 
 		"<div class=\'messagenick\'><a href='#' data-login=\'" + data.messageNick + "\' onclick=\'appealTo($(this)); return false\' class=\'appealTo\'>" + data.messageNick + "</a>:</div>" +
-		"<div class=\'avatarMessage\' style=\"background-image: url(\'\avatars\/" + data.messageNick + ".jpeg\');\"></div>" +
+		"<div class=\'avatarMessage\' style=\"background-image: url(" + data.avatarUrl + ");\"></div>" +
 		"<blockquote class=\'messagebody\'>" + data.message + "</blockquote></li>" + 
 		"<a href='#' class='deleteMessage' onclick=\'deleteMessage($(this)); return false;\'>удалить </a>" + 
 		"<a href='#' class='banAuthor' onclick=\'banAuthor($(this)); return false;\'> бан/разбан</a>");
@@ -142,26 +142,36 @@ socket.on('proposeSend', function(data){ /*принимаем от сервер�
 
 socket.on('newPlus', function(data, like){
 	var fff = '[data-propose = "' + data + '"]';
-	$(fff).find('.proposePlus').html('<strong>[' + like + ']</strong> - <span class="glyphicon glyphicon-thumbs-up"></span>');;
+	$(fff).find('.proposePlus').html('<strong>[' + like + ']</strong> - <span class="glyphicon glyphicon-thumbs-up"></span>');
+});
+
+socket.on('newNewsLike', function(data, like){
+	var fff = '[data-newskey = "' + data + '"]';
+	$(fff).find('strong').html('[' + like + ']');
 });
 
 socket.on('newsSend', function(data){
 	if (!userData.isEditor) {
-		$('#newsToLoad').append('<div class = \'newsItem\' data-newskey=\'' + data.newskey + '\'><h2 class=\'newsTitle\'>' + data.title + '</h2>' +
+		$('#newsToLoad').append('<div class = \'newsItem\' data-newskey=\'' + data._id + '\'><h2 class=\'newsTitle\'>' + data.title + '</h2>' +
 		'<p class = \'newsDate\'><br>' + data.date +
 		'<p class= \'newsImage\'><img src =\'' + data.img + '\' alt = \'newsimage\' width=\'45%\' height=\'45%\'></p>' +
-		'<p class=\'newsbody\'>' + data.body + '</p></div>');
+		'<p class=\'newsbody\'>' + data.body + '</p>' + 
+		'<strong  style=\'float: right;\'>[' + data.likes + ']</strong>' +
+		'<a href=\'#\' class=\'likeNews\' onclick=\'likeNews($(this)); return false;\' style=\'float: right; margin-right: 1%;\'><span class="glyphicon glyphicon-thumbs-up"></span></a><br></div>');
 	} else {
-		$('#newsToLoad').append('<div class = \'newsItem\' data-newskey=\'' + data.newskey + '\'><h2 class=\'newsTitle\'>' + data.title + '</h2>' +
+		$('#newsToLoad').append('<div class = \'newsItem\' data-newskey=\'' + data._id + '\'><h2 class=\'newsTitle\'>' + data.title + '</h2>' +
 		'<p class = \'newsDate\'><br>' + data.date +
 		'<p class= \'newsImage\'><img src =\'' + data.img + '\' alt = \'newsimage\' width=\'45%\' height=\'45%\'></p>' +
-		'<p class=\'newsbody\'>' + data.body + '</p></div>' + 
+		'<p class=\'newsbody\'>' + data.body + '</p>' + 
+		'<strong  style=\'float: right;\'>[' + data.likes + ']</strong>' +
+		'<a href=\'#\' class=\'likeNews\' onclick=\'likeNews($(this)); return false;\' style=\'float: right; margin-right: 1%;\'><span class="glyphicon glyphicon-thumbs-up"></span></a></div>' +
 		'<a href=\'#\' class=\'deleteNews\' onclick=\'deleteNews($(this)); return false;\'><span class="glyphicon glyphicon-trash"></span></a>');
 	}
 	$("img").error(function () {
 		$(this).hide();
 	});
 });
+
 
 socket.on('banListSent', function(datas){
 	$('#banListItems').empty();
@@ -266,7 +276,7 @@ function moderatorWindow() {
 
 function deleteMessage(messageClicked){
 	var messageIDToDelete = messageClicked.prev().attr('data-messageID');
-	var confirmData = {login: userData.login, session: document.cookie};
+	var confirmData = {_id: userData._id, session: document.cookie};
 	socket.emit('deleteMessage', messageIDToDelete, confirmData);
 	messageClicked.prev().remove();
 	messageClicked.next().remove();
@@ -277,7 +287,7 @@ function deletePropose(proposeClicked){
 	var proposeLoginToDelete = proposeClicked.prev().attr('data-proposelogin');
 	var proposeToDelete = proposeClicked.prev().attr('data-propose');
 	var deleteData = {login: proposeLoginToDelete, propose: proposeToDelete};
-	var confirmData = {login: userData.login, session: document.cookie};
+	var confirmData = {_id: userData._id, session: document.cookie};
 	console.log(deleteData);
 	socket.emit('deletePropose', deleteData, confirmData);
 	proposeClicked.prev().remove();
@@ -287,19 +297,19 @@ function deletePropose(proposeClicked){
 
 function deleteNews(newsClicked){
 	var newsToDelete = newsClicked.prev().attr('data-newskey');
-	var confirmData = {login: userData.login, session: document.cookie};
+	var confirmData = {_id: userData._id, session: document.cookie};
 	socket.emit('deleteNews', newsToDelete, confirmData);
 	newsClicked.prev().remove();
 	newsClicked.remove();
 }
 
 function banAuthor(messageClicked){
-	var confirmData = {login: userData.login, session: document.cookie};
+	var confirmData = {_id: userData._id, session: document.cookie};
 	var messageNickToBan = messageClicked.prev().prev().attr('data-messagenick');
 	socket.emit('banAuthor', messageNickToBan, confirmData);
 }
 function banProposeAuthor(proposeClicked){
-	var confirmData = {login: userData.login, session: document.cookie};
+	var confirmData = {_id: userData._id, session: document.cookie};
 	var messageNickToBan = proposeClicked.prev().prev().attr('data-proposeLogin');
 	socket.emit('banAuthor', messageNickToBan, confirmData);
 }

@@ -1,4 +1,4 @@
-﻿ 3423434234
+﻿ 34234342345345435
 29-10-16 15:33:56 @master remover @111 from EDITORS 
 29-10-16 15:33:59 @master made @111 an EDITOR 
 29-10-16 15:34:1 @master remover @111 from EDITORS 
@@ -68,4 +68,31 @@
 16-11-16 22:4:51 @123 banned @хуйло 
 16-11-16 22:14:18 @123 banned @Боец 
 17-11-16 9:36:9 @pavel banned @pavel 
-17-11-16 9:42:54 @pavel unbanned @pavel
+17-11-16 9:42:54 @pavel unbanned @pavel 
+24-11-16 19:29:10 CastError: Cast to ObjectId failed for value "@NEWMONGO91902" at path "_id" 
+24-11-16 19:37:43 CastError: Cast to ObjectId failed for value "@MASTER4823" at path "_id" 
+24-11-16 20:44:47 583721b32ff55b1258d0d031 made @master an EDITOR 
+25-11-16 21:38:7 583721b32ff55b1258d0d031 cleared VOTE 
+25-11-16 21:38:45 583721b32ff55b1258d0d031 changed VOTE 
+25-11-16 21:40:27 583721b32ff55b1258d0d031 banned @master 
+25-11-16 21:40:30 583721b32ff55b1258d0d031 unbanned undefined 
+25-11-16 21:40:40 583721b32ff55b1258d0d031 banned @master 
+25-11-16 21:40:46 583721b32ff55b1258d0d031 unbanned undefined 
+25-11-16 21:44:22 583721b32ff55b1258d0d031 banned @master 
+25-11-16 21:44:24 583721b32ff55b1258d0d031 unbanned @master 
+25-11-16 21:44:33 583721b32ff55b1258d0d031 banned @master 
+25-11-16 21:44:36 583721b32ff55b1258d0d031 unbanned @master 
+25-11-16 21:44:42 583721b32ff55b1258d0d031 banned @master 
+25-11-16 21:48:38 583721b32ff55b1258d0d031 unbanned @master 
+25-11-16 21:53:44 CastError: Cast to ObjectId failed for value "@ГЛИНОМЕС49274" at path "_id" 
+25-11-16 21:53:51 583721b32ff55b1258d0d031 banned @глиномес 
+25-11-16 21:54:4 583721b32ff55b1258d0d031 unbanned @глиномес 
+25-11-16 21:54:8 583721b32ff55b1258d0d031 banned @глиномес 
+25-11-16 21:54:37 CastError: Cast to ObjectId failed for value "@PAVEL32" at path "_id" 
+26-11-16 15:23:13 ReferenceError: newsneeded is not defined 
+26-11-16 15:23:19 ReferenceError: newsneeded is not defined 
+26-11-16 15:31:36 CastError: Cast to ObjectId failed for value "@12352438" at path "_id" 
+26-11-16 15:35:2 TypeError: Invalid sort() argument. Must be a string, object, or array. 
+26-11-16 17:10:16 CastError: Cast to ObjectId failed for value "@12362413" at path "_id" 
+26-11-16 17:11:3 CastError: Cast to ObjectId failed for value "@MASTER3548" at path "_id" 
+26-11-16 17:14:21 CastError: Cast to ObjectId failed for value "@12354123" at path "_id"

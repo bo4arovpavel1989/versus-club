@@ -8,10 +8,19 @@ if (userData.isEditor) {
 				});
 }
 socket.emit('newsNeeded', emitNewsCounter);
+
 $("#newsForm").submit(function(e){
 
 });
 function getMoreNews() {
-	emitNewsCounter = emitNewsCounter + 6;
+	emitNewsCounter = emitNewsCounter + 5;
 	socket.emit('newsNeeded', emitNewsCounter);
+}
+
+
+function likeNews(clicked){
+	var newsIdToLike = $(clicked).parent().attr('data-newskey');
+	var confirmData = {_id: userData._id, session: document.cookie};
+	socket.emit('likeNews', newsIdToLike, confirmData);
+	$(clicked).remove();
 }

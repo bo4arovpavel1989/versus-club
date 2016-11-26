@@ -2,7 +2,7 @@
 		var userData = {}; /*пользовательские данные*/
 		var loggedIn = false; /*переменная проверяет совершен ли аторизованный вход в систему*/
 		var loginButtonClicked = false;
-		var ipServer = 'http://109.120.138.53:8080'
+		var ipServer = 'http://localhost:8080'
 		var socket = io.connect(ipServer);;
 		var session;
 		var sessionArray;
@@ -18,12 +18,8 @@
 		
 		socket.on('takeData', function(data){
 			loggedIn = true;
-			userData = {};
 			userData = data;
-			eval('userData.isBanned=' + data.isBanned);
-			eval('userData.isModerator=' + data.isModerator);
-			eval('userData.isEditor=' + data.isEditor);
-			$('#loginforavatar').val(userData.login);
+			console.log(userData);
 			$("#loginFormToHide").remove();
 				$.ajax({
 					url: "personalcabinet.html",
@@ -31,7 +27,7 @@
 						$("#contentToUpload").append(html);
 					}
 				});
-		})
+		});
 		
 		function authorize() { /*вход в систему после авторизации*/
 				if (document.cookie.length > 1) {
@@ -137,7 +133,7 @@ $("#forgotForm").submit(function(e){
 
 $("#changeUserEmailForm").submit(function(e){
 	var newEmail = $("#inputNewEmail").val();
-	var dataToChange = {login: userData.login, email: newEmail, session: document.cookie};
+	var dataToChange = {_id: userData._id, email: newEmail, session: document.cookie};
 	socket.emit('changeUserEmail', dataToChange);
 	return false;
 });
@@ -146,7 +142,7 @@ $("#changeUserEmailForm").submit(function(e){
 $("#changeUserDataForm").submit(function(e){
 	var oldPass = $("#inputOldPass").val();
 	var newPass = $("#inputPasswordChange2").val();
-	var dataToChange = {login: userData.login, pass: oldPass, newpass: newPass, session: document.cookie};
+	var dataToChange = {_id: userData._id, pass: oldPass, newpass: newPass, session: document.cookie};
 	socket.emit('changeUserData', dataToChange);
 	return false;
 });

@@ -6,7 +6,8 @@ var customFunctions = require('./customfunctions');
 	var formatDate = customFunctions.formatDate;
 	var verificate = customFunctions.verificate;
 	var simpleVerificate = customFunctions.simpleVerificate;
-
+var Userschema = require('./mongoSchema.js');
+var Newsschema = require('./newsMongoSchema.js');
 var nodemailer = require('nodemailer');
 var smtpTransport = require('nodemailer-smtp-transport');
 var smtpConfig = {
@@ -26,31 +27,54 @@ var transporter = nodemailer.createTransport(smtpTransport(smtpConfig));
 		 /*Начало блока новостей*/ 
 		  
 		client.on('deleteNews', function(data, data2){ /*Удаление новости*/
-		try {
-			verificate(data2.login, data2.session, 'isEditor', function(rep){
-				if (rep) {
-					redisClient.lrem('newsTitles', 0, data);
-				}
-			});
-	} catch(e) {
-		writeLog(e);
-	};	
-	});
+			try {
+				verificate(data2._id, data2.session, 'isEditor', function(rep){
+					if (rep) Newsschema.remove({_id: data}).exec();
+				});
+			} catch(e) {
+				writeLog(e);
+			}	
+		});
 	
 	
 	client.on('newsNeeded', function(data){ /*клиент просит новости*/
 		try {
-			redisClient.lrange('newsTitles', data, data + 5, function(err, news){
+			console.log('newsneeded');
+			Newsschema.find({}, 'title body likes img date').skip(data).limit(5).sort({_id: -1}).exec(function(err, news){
+				console.log(news);
 				news.forEach(function(oneNews){
-					redisClient.hgetall(oneNews, function(err, rep){
-						client.emit('newsSend', rep);
-					});
+					client.emit('newsSend', oneNews);
 				});
 			});
 		} catch(e) {
 			writeLog(e);
 		}
 	});
+	
+	client.on('likeNews', function(data, data2){
+		try {
+			simpleVerificate(data2._id, data2.session, function(rep){
+				if (rep) {
+					Newsschema.update({_id: data}, {$addToSet: {likedOnes: data2._id}}).exec(function(err, rep2){
+						console.log(rep2);
+						Newsschema.findOne({_id: data}, 'likedOnes', function(err2, rep3){
+							if (rep3 !== null) {
+								console.log(rep3);
+								var likesNew = rep3.likedOnes.length;
+								console.log(likesNew);
+								Newsschema.update({_id: data}, {$set: {likes: likesNew}}).exec(function(err, rep3){
+									client.emit('newNewsLike', data, likesNew);
+								});
+							}
+						});
+					});
+				} 
+			});
+		} catch(e) {
+			writeLog(e);
+		}	
+	});
+	
 	
 	/*Конец блока новостей*/
 	
@@ -59,11 +83,11 @@ var transporter = nodemailer.createTransport(smtpTransport(smtpConfig));
 	client.on('proposePlused', function(data){ /*клиент плюсанул предложку*/
 		try {
 			console.log("propose plused");
-			simpleVerificate(data.login, data.session, function(reply){
+			simpleVerificate(data._id, data.session, function(reply){
 				if(reply) {
 					var proposePlusKey = 'proposePlusKey' + data.propose.toUpperCase();
 					var proposeKey = 'proposeKey' + data.propose.toUpperCase();
-					redisClient.sadd([proposePlusKey, data.login], function(err, rep){ /*список уникальных элементов - т.е. чтобы не повторялся давжды один и тот же проголосовавший логин. ключ списка - само содержание предложки*/
+					redisClient.sadd([proposePlusKey, data._id], function(err, rep){ /*список уникальных элементов - т.е. чтобы не повторялся давжды один и тот же проголосовавший логин. ключ списка - само содержание предложки*/
 						console.log(rep);
 						if (rep == 1) { /*ответ на добавление в списко логина = 1, что значит что логина в списке не было и он успешно добавлен*/
 							redisClient.hincrby(proposeKey, 'like', 1, function(err, rep){
@@ -71,8 +95,7 @@ var transporter = nodemailer.createTransport(smtpTransport(smtpConfig));
 									client.emit('newPlus', data.propose, likes);
 								});
 							});
-							var pluser = "userKey" + data.login.toUpperCase();
-							redisClient.hincrby(pluser, 'activity', 1); 
+							Userschema.update({_id: data._id}, {$inc: {activity: 1}}).exec();
 						}
 					});
 				}
@@ -103,30 +126,31 @@ var transporter = nodemailer.createTransport(smtpTransport(smtpConfig));
 	client.on('proposeUpload', function(data){ /*клиент отправил предложку*/
 		try {
 			console.log("propose Uploaded");
-			simpleVerificate(data.login, data.session, function(reply){
+			simpleVerificate(data._id, data.session, function(reply){
 				if(reply) {
 					var proposeStraight = data.propose1 + " VS " + data.propose2;
 					var proposeOpposite = data.propose2 + " VS " + data.propose1;
 					var proposeKey = 'proposeKey' + proposeStraight.toUpperCase();
-					var userDataKey = 'userKey' + data.login.toUpperCase();
 					if (!(data.propose1 === '' && data.propose2 === '' )) { /*проверяем чтоб не отправили пустышку*/
 						var checkProposeSymbol1 = proposeStraight.indexOf('\'');
 						var checkProposeSymbol2 = proposeStraight.indexOf('"');
 						if (checkProposeSymbol1 == -1 && checkProposeSymbol2 == -1) {
-							redisClient.hget(userDataKey, 'isBanned', function(err, rep){
-								if (rep == 'false' && proposeStraight.length < 100) {
-									redisClient.sismember(['proposalData', proposeStraight.toUpperCase()], function(err, rep2){
-										if (rep2 == 0) {
-											redisClient.sismember(['proposalData', proposeOpposite.toUpperCase()], function(err, rep3){
-												if (rep3 == 0) {
-													redisClient.hset(proposeKey, 'propose', proposeStraight);
-													redisClient.hset(proposeKey, 'login', data.login);
-													redisClient.hset(proposeKey, 'like', 0);
-													redisClient.sadd('proposalData', proposeStraight.toUpperCase());
-												}
-											});
-										}
-									});
+							Userschema.findOne({_id: data._id}, 'isBanned', function(err, rep){
+								if (rep !== null) {
+									if (rep.isBanned == false && proposeStraight.length < 100) {
+										redisClient.sismember(['proposalData', proposeStraight.toUpperCase()], function(err, rep2){
+											if (rep2 == 0) {
+												redisClient.sismember(['proposalData', proposeOpposite.toUpperCase()], function(err, rep3){
+													if (rep3 == 0) {
+														redisClient.hset(proposeKey, 'propose', proposeStraight);
+														redisClient.hset(proposeKey, 'login', data.login);
+														redisClient.hset(proposeKey, 'like', 0);
+														redisClient.sadd('proposalData', proposeStraight.toUpperCase());
+													}
+												});
+											}
+										});
+									}
 								}
 							});
 						}	
@@ -140,7 +164,7 @@ var transporter = nodemailer.createTransport(smtpTransport(smtpConfig));
 	
 	client.on('deletePropose', function(data, data2){ /*Удалить предложку*/
 		try {
-			verificate(data2.login, data2.session, 'isModerator', function(rep){
+			verificate(data2._id, data2.session, 'isModerator', function(rep){
 				if (rep) {
 					redisClient.srem(['proposalData', data.propose.toUpperCase()], function(err, rep){
 						console.log(rep);
@@ -166,7 +190,7 @@ var transporter = nodemailer.createTransport(smtpTransport(smtpConfig));
 	
 	client.on('clearPropose', function(data){
 		try {
-			verificate(data.login, data.session, 'isEditor', function(rep){
+			verificate(data._id, data.session, 'isEditor', function(rep){
 				if (rep) {
 					redisClient.smembers('proposalData', function(err, reps){
 						reps.forEach(function(rep){
@@ -208,7 +232,7 @@ var transporter = nodemailer.createTransport(smtpTransport(smtpConfig));
 	
 	client.on('vote', function(data){ /*клиент проголосовал*/
 		try {
-			simpleVerificate(data.votedLogin, data.session, function(reply){
+			simpleVerificate(data._id, data.session, function(reply){
 				if (reply) {
 					console.log("vote received " + data.votedLogin + " " + data.vote);
 					redisClient.lpush(['vote', data.vote], function(err, resp){
@@ -216,7 +240,7 @@ var transporter = nodemailer.createTransport(smtpTransport(smtpConfig));
 					redisClient.lpush(['votedLogin', data.votedLogin], function(err, resp){
 					});
 					var voter = "userKey" + data.votedLogin.toUpperCase();
-					redisClient.hincrby(voter, 'activity', 3); 
+					Userschema.update({_id: data._id}, {$inc: {activity: 3}}).exec(); 
 				}
 			});
 		} catch(e) {
@@ -226,7 +250,7 @@ var transporter = nodemailer.createTransport(smtpTransport(smtpConfig));
 	
 	client.on('clearvote', function(data){
 			try {
-				verificate(data.login, data.session, 'isEditor', function(rep){
+				verificate(data._id, data.session, 'isEditor', function(rep){
 					if (rep) {
 						redisClient.del('vote');
 						redisClient.del('votedLogin');
@@ -240,7 +264,7 @@ var transporter = nodemailer.createTransport(smtpTransport(smtpConfig));
 	
 	client.on('changeVote', function(data, data2){
 		try {
-		verificate(data2.login, data2.session, 'isEditor', function(rep){
+		verificate(data2._id, data2.session, 'isEditor', function(rep){
 				if (rep) {
 					redisClient.hset('voteCandidates', 'first', data.first);
 					redisClient.hset('voteCandidates', 'second', data.second);
@@ -276,33 +300,35 @@ var transporter = nodemailer.createTransport(smtpTransport(smtpConfig));
 		try {
 			console.log("message received");
 			console.log(data.message === '');
-			simpleVerificate(data.messageNick, data2.session, function(reply){
+			simpleVerificate(data._id, data2.session, function(reply){
 				if(reply) {
 					if (!(data.message === '')) { /*проверяем чтоб не отправили пустышку*/
-						var messager = "userKey" + data.messageNick.toUpperCase();
-						redisClient.hget(messager, 'isBanned', function(err, rep){
-							if (rep == 'false') {
-								redisClient.hincrby(messager, 'activity', 1); /*увеличиваем активность пользователя отправившего сообщение*/
-								redisClient.incr('currentMessageID', function(err, messageID){
+						var messager = data._id;
+						Userschema.findOne({_id: messager}, 'isBanned', function(err, rep){
+							if (rep !== null) {
+								if (rep.isBanned == false) {
 									if(data.message.length < 250) {
-										redisClient.lpush(['messageIDs', messageID], function(err, rep3){
-											console.log("message saved");
-											var messageByID = 'messageByID' + messageID;
-											client.broadcast.emit('messageSentRealTime', data, messageID); 
-											client.emit('messageSentRealTime', data, messageID); 
-											redisClient.hset(messageByID, 'messageNick', data.messageNick);
-											redisClient.hset(messageByID, 'message', data.message);
-											if (rep3 > 100) {
-												redisClient.rpop('messageIDs', function(err, rep4){
-													var messageByIDToDel = 'messageByID' + rep4;
-													redisClient.del(messageByIDToDel);
+										redisClient.incr('currentMessageID', function(err, messageID){
+												redisClient.lpush(['messageIDs', messageID], function(err, rep3){
+													console.log("message saved");
+													var messageByID = 'messageByID' + messageID;
+													client.broadcast.emit('messageSentRealTime', data, messageID); 
+													client.emit('messageSentRealTime', data, messageID); 
+													redisClient.hset(messageByID, 'messageNick', data.messageNick);
+													redisClient.hset(messageByID, 'message', data.message);
+													redisClient.hset(messageByID, '_id', data._id);
+													redisClient.hset(messageByID, 'avatarUrl', data.avatarUrl);
+													Userschema.update({_id: messager}, {$inc: {activity: 1}}).exec(); /*увеличиваем активность пользователя отправившего сообщение*/
+													if (rep3 > 100) {
+														redisClient.rpop('messageIDs', function(err, rep4){
+															var messageByIDToDel = 'messageByID' + rep4;
+															redisClient.del(messageByIDToDel);
+														});
+													}
 												});
-											}
 										});
-									} else {
-										redisClient.decr('currentMessageID');
 									}
-								});
+								}
 							}
 						});
 					}
@@ -316,12 +342,14 @@ var transporter = nodemailer.createTransport(smtpTransport(smtpConfig));
 	client.on('deleteMessage', function(data, data2){ /*команда на удаление сообщения*/
 		try {
 			console.log(data + 'is about to delete');
-			verificate(data2.login, data2.session, 'isModerator', function(rep1){
+			verificate(data2._id, data2.session, 'isModerator', function(rep1){
 				if (rep1) {
 						redisClient.lrem(['messageIDs', 0, data], function(err, rep){
 						console.log(rep);
 						var messageByIDToDel = 'messageByID' + data;
-						redisClient.del(messageByIDToDel);
+						redisClient.del(messageByIDToDel, function(err, rep2){
+							console.log(rep2);
+						});
 					});
 				}
 			});
@@ -336,7 +364,7 @@ var transporter = nodemailer.createTransport(smtpTransport(smtpConfig));
 
 	client.on('logoff', function(data){
 		try {
-			redisClient.hdel('session', data);
+			Userschema.update({_id: data}, {$set: {session: 0}}).exec();
 		} catch(e) {
 			writeLog(e);
 		}
@@ -344,13 +372,10 @@ var transporter = nodemailer.createTransport(smtpTransport(smtpConfig));
 	
 	client.on('getData', function(data){
 		try {
-			redisClient.hget('session', data, function(err, rep){ /*ищем нужную сессию - к ней привязан ключ юзера*/
+			Userschema.findOne({session: data}, function(err, rep){ /*ищем нужную сессию - к ней привязан ключ юзера*/
 				console.log(rep);
 				if (rep != null) {
-					redisClient.hgetall(rep, function(err, rep2){ /*ответ на запрос - ключ юзера, выдаем инфо*/
-					console.log(rep2);
-					client.emit('takeData', rep2);
-					});
+					client.emit('takeData', rep);
 				} else {
 					client.emit('invalidSession');
 				}
@@ -387,25 +412,24 @@ var transporter = nodemailer.createTransport(smtpTransport(smtpConfig));
 			console.log(data);
 			var loginToEnter = "@" + data.login.toUpperCase();
 			var passwordToEnter = data.passwd;
-			var userDataKey = 'userKey' + loginToEnter;
-			redisClient.hget(userDataKey, 'password', function(err, reply){
-				if(passwordToEnter == reply){ /*данные введенные клиентом есть в массиве логин-паролей*/
-				var sessionItem;
-				sessionItem = getRandomInt(1, 1000);
-				sessionItem = loginToEnter + sessionItem;
-				redisClient.hget('sessionOwner', userDataKey, function(err, rep){ /*Ищем прежнюю сессию этого юзера и трем ее*/
-					redisClient.hdel('session', rep, function(err, rep){
-						console.log('deleteng last session - ' + rep);
-						redisClient.hset('session', sessionItem, userDataKey); /*сохраняем сессию юзера*/
-						redisClient.hset('sessionOwner', userDataKey, sessionItem); /*пишем какая у юзера сессия, чтоб по запросу выдавать нужные данные*/
+			Userschema.findOne({loginUpperCase: loginToEnter}, 'password', function(err, reply){
+				if (reply !== null) {
+					if(passwordToEnter == reply.password){ /*данные введенные клиентом есть в массиве логин-паролей*/
+					var sessionItem;
+					sessionItem = getRandomInt(1, 100000);
+					sessionItem = loginToEnter + sessionItem;
+					Userschema.update({loginUpperCase: loginToEnter}, {$set: {session: sessionItem}}, function(err, rep){
 						client.emit('loginSuccess', sessionItem);
-				});
+					});
+					} else { /*клиент ввел данные не соответствубщие логинов-паролей*/
+						console.log('wrong user data');
+						client.emit('loginFailed');
+					}
+				} else { /*клиент ввел данные не соответствубщие логинов-паролей*/
+						console.log('wrong user data');
+						client.emit('loginFailed');
+				}		
 			});
-			
-			} else { /*клиент ввел данные не соответствубщие логинов-паролей*/
-				console.log('wrong user data');
-				client.emit('loginFailed');
-			}});
 		} catch(e) {
 			writeLog(e);
 		}
@@ -413,21 +437,26 @@ var transporter = nodemailer.createTransport(smtpTransport(smtpConfig));
 	
 	client.on('makeEditor', function(data, data2){
 		try {
-			verificate(data2.login, data2.session, 'isModerator', function(rep1){
-				var userDataKey = 'userKey@' + data.toUpperCase();
-				redisClient.hget(userDataKey, 'isEditor', function(err, rep){
-					if (rep == 'false') {
-						redisClient.hset(userDataKey, 'isEditor', true, function(err, rep){
-							client.emit('editorAdded', '@' + data);
-							writeLog(data2.login + " made @" + data + " an EDITOR");
-						});
-					} else {
-						redisClient.hset(userDataKey, 'isEditor', false, function(err, rep){
-							client.emit('editorRemoved', '@' + data);
-							writeLog(data2.login + " remover @" + data + " from EDITORS");
-						});
-					}
-				});
+			console.log(data2);
+			verificate(data2._id, data2.session, 'isModerator', function(rep1){
+				if (rep1) {
+					data = '@' + data.toUpperCase();
+					Userschema.findOne({loginUpperCase: data}, 'isEditor login', function(err, rep){
+						if (rep !== null) {
+							if (rep.isEditor == false) {
+								Userschema.update({loginUpperCase: data}, {$set: {isEditor: true}}, function(err, rep2){
+									client.emit('editorAdded', rep.login);
+									writeLog(data2._id + " made " + rep.login + " an EDITOR");
+								});
+							} else {
+								Userschema.update({loginUpperCase: data}, {$set: {isEditor: false}}, function(err, rep2){
+									client.emit('editorRemoved', rep.login);
+									writeLog(data2._id + " made @" + rep.login + " an EDITOR");
+								});
+							}
+						}
+					});
+				}
 			});
 		} catch(e) {
 			writeLog(e);
@@ -436,20 +465,23 @@ var transporter = nodemailer.createTransport(smtpTransport(smtpConfig));
 	
 	client.on('makeModerator', function(data, data2){
 		try {
-			verificate(data2.login, data2.session, 'isModerator', function(rep1){
+			console.log(data2);
+			verificate(data2._id, data2.session, 'isModerator', function(rep1){
 				if(rep1) {
-					var userDataKey = 'userKey@' + data.toUpperCase();
-					redisClient.hget(userDataKey, 'isModerator', function(err, rep){
-						if (rep == 'false') {
-							redisClient.hset(userDataKey, 'isModerator', true, function(err, rep){
-								client.emit('moderatorAdded', '@' + data);
-								writeLog(data2.login + " made @" + data + " a MODERATOR");
-							});
-						} else {
-							redisClient.hset(userDataKey, 'isModerator', false, function(err, rep){
-								client.emit('moderatorRemoved', '@' + data);
-								writeLog(data2.login + " removed @" + data + " from MODERATORS");
-							});
+					data = '@' + data.toUpperCase();
+					Userschema.findOne({loginUpperCase: data}, 'isModerator login', function(err, rep){
+						if (rep !== null) {
+							if (rep.isEditor == false) {
+								Userschema.update({loginUpperCase: data}, {$set: {isModerator: true}}, function(err, rep2){
+									client.emit('moderatorAdded', rep.login);
+									writeLog(data2._id + " made" + rep.login + " an EDITOR");
+								});
+							} else {
+								Userschema.update({loginUpperCase: data}, {$set: {isModerator: false}}, function(err, rep2){
+									client.emit('moderatorRemoved', rep.login);
+									writeLog(data2._id + " made" + rep.login + " an EDITOR");
+								});
+							}
 						}
 					});
 				}
@@ -461,25 +493,27 @@ var transporter = nodemailer.createTransport(smtpTransport(smtpConfig));
 	
 	client.on('banAuthor', function(data, data2){ /*по команде бан меняем значение в хэшмапе пользователя на противоположное*/
 		try {
-			var userDataKey = 'userKey' + data.toUpperCase();
 			console.log(data);
-			verificate(data2.login, data2.session, 'isModerator', function(rep1){
+			verificate(data2._id, data2.session, 'isModerator', function(rep1){
 				if (rep1) {
-					redisClient.hget(userDataKey, 'isBanned', function(err, rep){
-						if (rep == 'false') {
-							redisClient.hset(userDataKey, 'isBanned', true, function(err, rep){
-								client.emit('banSuccess', data);
-								client.broadcast.emit('banRealTime', data);
-								redisClient.sadd('banList', data);
-								writeLog(data2.login + " banned " + data);
-							});
-						} else {
-							redisClient.hset(userDataKey, 'isBanned', false, function(err, rep){
-								client.emit('banCancel', data);
-								client.broadcast.emit('banCancelRealTime', data);
-								redisClient.srem('banList', data);
-								writeLog(data2.login + " unbanned " + data);
-							});
+					data = data.toUpperCase();
+					Userschema.findOne({loginUpperCase: data}, 'isBanned login', function(err, rep){
+						if (rep !== null) {
+							if (rep.isBanned == false) {
+								Userschema.update({loginUpperCase: data}, {$set: {isBanned: true}}, function(err, rep2){
+									client.emit('banSuccess', rep.login);
+									client.broadcast.emit('banRealTime', rep.login);
+									redisClient.sadd('banList', data);
+									writeLog(data2._id + " banned " + rep.login);
+								});
+							} else {
+								Userschema.update({loginUpperCase: data}, {$set: {isBanned: false}}, function(err, rep2){
+									client.emit('banCancel', rep.login);
+									client.broadcast.emit('banCancelRealTime', rep.login);
+									redisClient.srem('banList', data);
+									writeLog(data2._id + " unbanned " + rep.login);
+								});
+							}
 						}
 					});
 				}
@@ -517,16 +551,17 @@ var transporter = nodemailer.createTransport(smtpTransport(smtpConfig));
 	client.on('searchBanned', function(data){
 		try {
 			var dataToFind = data.toUpperCase();
-			redisClient.sismember('banList', dataToFind, function(err, rep){
-				if(rep === 1) {
-					var userDataKey = 'userKey' + data.toUpperCase();
-					redisClient.hget(userDataKey, 'login', function(err, rep2){
-						client.emit('heIsBanned', rep2);
-					})
-				} else {
-					client.emit('bannedNotFound');
-				}
-			});
+				redisClient.sismember('banList', dataToFind, function(err, rep2) {
+					if(rep2 === 1) {
+						Userschema.findOne({loginUpperCase: dataToFind}, 'login', function(err, rep3){
+							if (rep3 !== null) {
+								client.emit('heIsBanned', rep3.login);
+							}
+						});
+					} else {
+						client.emit('bannedNotFound');
+					}
+				});
 		} catch(e) {
 			writeLog(e);
 		}
@@ -535,16 +570,14 @@ var transporter = nodemailer.createTransport(smtpTransport(smtpConfig));
 	
 	client.on("changeUserEmail", function(data){
 		try {
-			simpleVerificate(data.login, data.session, function(reply){
+			simpleVerificate(data._id, data.session, function(reply){
 				if(reply) {
-					var userDataKey = 'userKey' + data.login.toUpperCase();
-					redisClient.hset(userDataKey, 'email', data.email, function(err, rep){
-						if (rep == 0) {
-							client.emit('changeUserDataSuccess');
-						}
+					Userschema.update({_id: data._id}, {$set: {email: data.email}}, function(err, rep){
+						if (err) {client.emit('changeUserdataFailed');}
+						client.emit('changeUserDataSuccess');
 					});
 				} else {
-					console.log('change email - no verificate');
+					client.emit('changeUserdataFailed');
 				}
 			});
 		} catch(e) {
@@ -556,18 +589,18 @@ var transporter = nodemailer.createTransport(smtpTransport(smtpConfig));
 	client.on('changeUserData', function(data){
 		try {
 			console.log(data);
-			simpleVerificate(data.login, data.session, function(rep){
+			simpleVerificate(data._id, data.session, function(rep){
 				if(rep) {
-					var userDataKey = 'userKey' + data.login.toUpperCase();
-					redisClient.hget(userDataKey, 'password', function(err, reply){
-						if(data.pass == reply){ /*данные введенные клиентом есть в массиве логин-паролей*/
-							redisClient.hset(userDataKey, 'password', data.newpass, function(err, rep){
-								console.log(data.newpass);
-								client.emit('changeUserDataSuccess'); 	/*отправление данных пользователя в формате объекта*/
-							});	
-						} else { /*клиент ввел данные не соответствубщие логинов-паролей*/
-							client.emit('changeUserdataFailed');
-						}	
+					Userschema.findOne({_id: data._id}, 'password', function(err, reply){
+						if (reply !== null) {
+							if(data.pass == reply.password){ /*данные введенные клиентом есть в массиве логин-паролей*/
+								Userschema.update({_id: data._id}, {$set: {password: data.newpass}}, function(err, rep){
+									client.emit('changeUserDataSuccess'); 	/*отправление данных пользователя в формате объекта*/
+								});	
+							} else { /*клиент ввел данные не соответствубщие логинов-паролей*/
+								client.emit('changeUserdataFailed');
+							}	
+						}
 					});	
 				} else {
 					client.emit('changeUserdataFailed');
@@ -580,29 +613,29 @@ var transporter = nodemailer.createTransport(smtpTransport(smtpConfig));
 	
 	client.on('forgotLogin', function(data){
 		try {
-			var userDataKey = 'userKey@' + data.forgotLogin.toUpperCase();
+			var userDataKey = '@' + data.forgotLogin.toUpperCase();
 			console.log(userDataKey);
-			redisClient.hget(userDataKey, 'email', function(err, mail){
-				console.log(mail);
-				redisClient.hget(userDataKey, 'password', function(err2, pass){
-					console.log(pass);
-					var mailOptions = {
-						from: 'versus', // sender address
-						to: mail, // list of receivers
-						subject: 'VERSUS-CLUB restore', // Subject line
-						text: 'Твой пароль', // plaintext body
-						html: '<b>Твой пароль: ' + pass + '</b>' // html body
-					};
-					transporter.sendMail(mailOptions, function(error, info){
-						if(error){
-							console.log(mail);
-							client.emit('emailSendFail');
-							return console.log(error);
-						}
-							console.log('Message sent: ' + info.response);
-							client.emit('checkYouEmail');
-					});
-				});
+			Userschema.findOne({loginUpperCase: userDataKey}, 'email password', function(err, rep){
+				if (rep !== null) {
+					console.log(rep.email);
+					console.log(rep.password);
+						var mailOptions = {
+							from: 'versus', // sender address
+							to: rep.email, // list of receivers
+							subject: 'VERSUS-CLUB restore', // Subject line
+							text: 'Твой пароль', // plaintext body
+							html: '<b>Твой пароль: ' + rep.password + '</b>' // html body
+						};
+						transporter.sendMail(mailOptions, function(error, info){
+							if(error){
+								console.log(rep.email);
+								client.emit('emailSendFail');
+								return console.log(error);
+							}
+								console.log('Message sent: ' + info.response);
+								client.emit('checkYouEmail');
+						});
+				}	
 			});
 		} catch(e) {
 			writeLog(e);
@@ -612,12 +645,10 @@ var transporter = nodemailer.createTransport(smtpTransport(smtpConfig));
 	client.on('forgotEmail', function(data){
 		try {
 			console.log(data.forgotEmail);
-			redisClient.hget('userEmail', data.forgotEmail, function(err, userData){
-				if(userData != null) {
-					redisClient.hget(userData, 'login', function(err, rep){
-						var loginToSend = rep;
-						redisClient.hget(userData, 'password', function(err2, rep2){
-							var passToSend = rep2;
+			Userschema.findOne({email: data.forgotEmail}, 'login password', function(err, rep2){
+				if(rep2 != null) {
+						var loginToSend = rep.login;
+							var passToSend = rep2.password;
 							var mailOptions = {
 								from: 'versus', // sender address
 								to: data.forgotEmail, // list of receivers
@@ -633,8 +664,6 @@ var transporter = nodemailer.createTransport(smtpTransport(smtpConfig));
 						}
 							console.log('Message sent: ' + info.response);
 							client.emit('checkYouEmail');
-					});
-						});
 					});
 				} else {
 					client.emit('emailSendFail');
