@@ -75,6 +75,67 @@ var transporter = nodemailer.createTransport(smtpTransport(smtpConfig));
 		}	
 	});
 	
+	client.on('newsCommentsNeeded', function(data){
+		try {
+			console.log('newsCommentsNeeded');
+			Newsschema.findOne({_id: data}, 'comments', function(err, rep){
+				if (rep !== null && rep !== undefined && rep.comments !== undefined && rep.comments.length !== 0) {
+					var commentCounter = 0;
+					rep.comments.forEach(function(comment){
+						console.log(comment);
+						if (comment.isAvailable) {
+							client.emit('newsCommentSent', comment, data, commentCounter);
+						}
+						commentCounter++;
+					});
+				} else {
+					client.emit('noNewsComments', data);
+				}
+			});
+		} catch(e) {
+			writeLog(e);
+		}
+	});
+	
+	client.on('newCommentUpload', function(data, data2){
+		try {
+			if (data.comment !== '') {
+				simpleVerificate(data2._id, data2.session, function(rep){
+					if(rep) {
+						try {
+							Userschema.findOne({_id: data2._id}, 'isBanned', function(err, rep){
+								if(rep!== null && rep.isBanned == false) {
+									try {
+										var comment = {login: data.login, comment: data.comment, isAvailable: true};
+										Newsschema.update({_id: data._id}, {$push: {comments: comment}}).exec();
+									} catch(e) {}
+								}
+							});
+						} catch(e) {}
+					}
+				});
+			}
+		} catch(e) {}
+	});
+	
+	client.on('deleteComment', function(data, data2){
+		try {
+			verificate(data2._id, data2.session, 'isModerator', function(rep){
+				if(rep) {
+					var position = data.commentCount;
+					Newsschema.findOne({_id: data._id}, 'comments', function(err, rep2){
+						console.log(rep2);
+						console.log(rep2.comments[position]);
+						console.log(rep2.comments[position].isAvailable);
+						rep2.comments[position].isAvailable = false;
+						rep2.markModified('comments')
+						rep2.save();
+					});
+				}
+			});
+		} catch(e) {}
+	});
+	
 	
 	/*Конец блока новостей*/
 	

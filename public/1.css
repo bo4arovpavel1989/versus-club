@@ -1,4 +1,4 @@
-﻿.likeNews, .deleteNews, .deleteMessage, .deletePropose, .banAuthor, .proposePlus, #logoff, #options, #masterwindowstart, #moderatorwindowstart, #clearPropose, #clearVote {
+﻿.showComments, .likeNews, .deleteNews, .deleteMessage, .deletePropose, .banAuthor, .proposePlus, #logoff, #options, #masterwindowstart, #moderatorwindowstart, #clearPropose, #clearVote {
 	color: #5F676D;
 }
 .hiddenPagination {
@@ -10,11 +10,11 @@
 #masterwindowstart, #moderatorwindowstart {
 	margin-left: 12px;
 }
-.likeNews:hover,.deleteNews:hover, .deleteMessage:hover, .deletePropose:hover, .banAuthor:hover, .proposePlus:hover, #clearPropose:hover, #logoff:hover, #options:hover, #masterwindowstart:hover, #moderatorwindowstart:hover, #clearVote:hover {
+.showComments:hover, .likeNews:hover,.deleteNews:hover, .deleteMessage:hover, .deletePropose:hover, .banAuthor:hover, .proposePlus:hover, #clearPropose:hover, #logoff:hover, #options:hover, #masterwindowstart:hover, #moderatorwindowstart:hover, #clearVote:hover {
 	color: red !important;
 }
 
-.likeNews:hover,.deleteNews:visited, .deleteMessage:visited, .deletePropose:visited, .banAuthor:visited, .proposePlus:visited, #clearPropose:visited , #clearVote:visited{
+.showComments:visited, .likeNews:visited, .deleteNews:visited, .deleteMessage:visited, .deletePropose:visited, .banAuthor:visited, .proposePlus:visited, #clearPropose:visited , #clearVote:visited{
 	color: #5F676D;
 }
 .navbar-nav>li >a:hover{
@@ -339,7 +339,9 @@ body {
 	float: right;
 }
 
-
+.commentItem {
+	margin-left: 20%;
+}
 .newsItem{
 	border-top: 0.2px solid black;
 }

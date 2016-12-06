@@ -157,7 +157,8 @@ socket.on('newsSend', function(data){
 		'<p class= \'newsImage\'><img src =\'' + data.img + '\' alt = \'newsimage\' width=\'45%\' height=\'45%\'></p>' +
 		'<p class=\'newsbody\'>' + data.body + '</p>' + 
 		'<strong  style=\'float: right;\'>[' + data.likes + ']</strong>' +
-		'<a href=\'#\' class=\'likeNews\' onclick=\'likeNews($(this)); return false;\' style=\'float: right; margin-right: 1%;\'><span class="glyphicon glyphicon-thumbs-up"></span></a><br></div>');
+		'<a href=\'#\' class=\'likeNews\' onclick=\'likeNews($(this)); return false;\' style=\'float: right; margin-right: 1%;\'><span class="glyphicon glyphicon-thumbs-up"></span></a><br></div>' +
+		'<div class=\'text-center\'><a href=\'#\' class=\'showComments\' onclick=\'showComments(\"' + data._id + '\", ' + '$(this)); return false;\'>[ПОКАЗАТЬ КОММЕНТАРИИ]</a></div>');
 	} else {
 		$('#newsToLoad').append('<div class = \'newsItem\' data-newskey=\'' + data._id + '\'><h2 class=\'newsTitle\'>' + data.title + '</h2>' +
 		'<p class = \'newsDate\'><br>' + data.date +
@@ -165,12 +166,50 @@ socket.on('newsSend', function(data){
 		'<p class=\'newsbody\'>' + data.body + '</p>' + 
 		'<strong  style=\'float: right;\'>[' + data.likes + ']</strong>' +
 		'<a href=\'#\' class=\'likeNews\' onclick=\'likeNews($(this)); return false;\' style=\'float: right; margin-right: 1%;\'><span class="glyphicon glyphicon-thumbs-up"></span></a></div>' +
-		'<a href=\'#\' class=\'deleteNews\' onclick=\'deleteNews($(this)); return false;\'><span class="glyphicon glyphicon-trash"></span></a>');
+		'<a href=\'#\' class=\'deleteNews\' onclick=\'deleteNews($(this)); return false;\'><span class="glyphicon glyphicon-trash"></span></a>' + 
+		'<div class=\'text-center\'><a href=\'#\' class=\'showComments\' onclick=\'showComments(\"' + data._id + '\", ' + '$(this)); return false;\'>[ПОКАЗАТЬ КОММЕНТАРИИ]</a></div>');
 	}
 	$("img").error(function () {
 		$(this).hide();
 	});
 });
+
+socket.on('noNewsComments', function(data){
+	var fff = '[data-newskey = "' + data + '"]';
+	$(fff).append('<div class=\'text-center\'>КОММЕНТАРИЕВ ПОКА НЕТ</div><br>');
+});
+
+socket.on('newsCommentSent', function(comment, id, commentCount){
+	var fff = '[data-newskey = "' + id + '"]';
+	if (!userData.isModerator) {$(fff).append('<div class=\'commentItem\' data-commentCount=\'' + commentCount + '\'>' + comment.login + ': ' + comment.comment + '</div><br>');}
+	else {
+		$(fff).append('<br><br><div class=\'commentItem\' data-commentCount=\'' + commentCount + '\'>' + comment.login + ': ' + comment.comment + '<a href=\'#\' class=\'deleteMessage\' onclick=\'deleteComment(\"' + commentCount+'\", \"' + id + '\"); return false\'>удалить</a></div>');
+	}
+});
+
+function deleteComment(commentCount, id){
+	var confirmData = {_id: userData._id, session: document.cookie};
+	var deleteData = {commentCount: commentCount, _id: id};
+	socket.emit('deleteComment', deleteData, confirmData);
+}
+
+
+
+function showComments(id, clickedItem) {
+	socket.emit('newsCommentsNeeded', id);
+	var commentFormPlace = $(clickedItem).parent();
+	$(clickedItem).remove();
+	if (!userData.isBanned) {
+		$.ajax({
+						url: 'commentsForm.html',
+						success: function(html){
+							commentFormPlace.html('<div style=\'display: none;\'>' + id + '</div>');
+							commentFormPlace.append(html);
+						}
+					});
+	}
+}
+
 
 
 socket.on('banListSent', function(datas){
@@ -296,11 +335,14 @@ function deletePropose(proposeClicked){
 }
 
 function deleteNews(newsClicked){
-	var newsToDelete = newsClicked.prev().attr('data-newskey');
-	var confirmData = {_id: userData._id, session: document.cookie};
-	socket.emit('deleteNews', newsToDelete, confirmData);
-	newsClicked.prev().remove();
-	newsClicked.remove();
+	var confirmDelete = confirm('Уверен?');
+	if (confirmDelete) {
+		var newsToDelete = newsClicked.prev().attr('data-newskey');
+		var confirmData = {_id: userData._id, session: document.cookie};
+		socket.emit('deleteNews', newsToDelete, confirmData);
+		newsClicked.prev().remove();
+		newsClicked.remove();
+	}
 }
 
 function banAuthor(messageClicked){

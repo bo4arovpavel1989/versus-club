@@ -1,0 +1,23 @@
+<form class="form-inline commentsForm" action="/" method="post">
+   <div class="form-group commentGroup">
+      <input type="message" class="form-control comment" maxlength = "140" placeholder="Comment" required>
+  </div>
+  <div class="form-group">
+	  <input class="btn btn-primary" type="submit" value="Отправить"></input>
+  </div>
+</form>
+<script>
+	$('.commentsForm').submit(function(){
+		var confirmData = {_id: userData._id, session: document.cookie};
+		var comment = $(this).children('.commentGroup').children('.comment').val();
+		var newsId = $(this).prev().html();
+		var commentData = {login: userData.login, comment: comment, _id: newsId};
+		if (comment !== '') {
+			socket.emit('newCommentUpload', commentData, confirmData);
+		}
+		$(this).children('.commentGroup').children('.comment').val('')
+		var fff = '[data-newskey = "' + newsId + '"]';
+		$(fff).append('<div class=\'commentItem\'>' + userData.login + ': ' + comment + '</div><br>');
+		return false;
+	});
+</script>
