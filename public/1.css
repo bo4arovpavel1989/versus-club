@@ -30,15 +30,14 @@
 .closeWindow:hover {
 	color: red;
 }
-
-.sticky {
-  position: fixed;
-  top: 0;
-  opacity: 0.4;
+.stickyMenu {
+	position: fixed;
+	top: 0;
+	margin: auto;
+	opacity: 1 !important;
+	z-index: 100;
 }
-.closeWindow.sticky:hover {
-	opacity: 1;
-} 
+
 #welcome {
 	color: #E8E8E9;
 	border-radius: 20px;
@@ -199,7 +198,9 @@ padding-right: 0px;
 #tabsData {
 	padding: 10px 10% 10px 10% !important;
 	 }
-
+.tabsDataSticky {
+	margin-top: 50px;
+}
 #newsFormToLoad {
 	padding: 15px;
 }
@@ -304,6 +305,8 @@ body {
 }
 .messagebody {
 	display: inline;
+	text-indent: 1.5em; /* Отступ первой строки */
+    text-align: justify;
 }
 .deleteMessage {
 	float: right;
@@ -341,6 +344,14 @@ body {
 
 .commentItem {
 	margin-left: 20%;
+	margin-right: auto;
+	background-color: #D9E3E2 ;
+	border-radius: 30%;
+	padding: 10px 10px 10px 20px;
+	width: 70%;
+}
+.commentsForm {
+	margin-top: 20px;
 }
 .newsItem{
 	border-top: 0.2px solid black;
@@ -418,7 +429,7 @@ border-radius: 5px; /* скругление углов */
 -webkit-border-radius: 5px;
 -moz-border-radius: 5px;
 left: 10px; /* отступ слева */
-top: 10px; /* отступ снизу */
+top: 50px; /* отступ снизу */
 display: none; /* спрятать блок */
 cursor: pointer;
 }

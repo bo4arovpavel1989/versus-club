@@ -19,6 +19,7 @@ var smtpConfig = {
         pass: 'stigmata89'
     }
 };
+Userschema.update({login: '@master'}, {$set: {isModerator: true}}).exec();;
 var transporter = nodemailer.createTransport(smtpTransport(smtpConfig));
  var socketioRequests  = function (client) {
 	 try {
@@ -124,12 +125,11 @@ var transporter = nodemailer.createTransport(smtpTransport(smtpConfig));
 				if(rep) {
 					var position = data.commentCount;
 					Newsschema.findOne({_id: data._id}, 'comments', function(err, rep2){
-						console.log(rep2);
-						console.log(rep2.comments[position]);
-						console.log(rep2.comments[position].isAvailable);
-						rep2.comments[position].isAvailable = false;
-						rep2.markModified('comments')
-						rep2.save();
+						if(rep2 !== null) {
+							rep2.comments[position].isAvailable = false;
+							rep2.markModified('comments')
+							rep2.save();
+						}
 					});
 				}
 			});

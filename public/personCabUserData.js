@@ -165,8 +165,8 @@ socket.on('newsSend', function(data){
 		'<p class= \'newsImage\'><img src =\'' + data.img + '\' alt = \'newsimage\' width=\'45%\' height=\'45%\'></p>' +
 		'<p class=\'newsbody\'>' + data.body + '</p>' + 
 		'<strong  style=\'float: right;\'>[' + data.likes + ']</strong>' +
-		'<a href=\'#\' class=\'likeNews\' onclick=\'likeNews($(this)); return false;\' style=\'float: right; margin-right: 1%;\'><span class="glyphicon glyphicon-thumbs-up"></span></a></div>' +
-		'<a href=\'#\' class=\'deleteNews\' onclick=\'deleteNews($(this)); return false;\'><span class="glyphicon glyphicon-trash"></span></a>' + 
+		'<a href=\'#\' class=\'likeNews\' onclick=\'likeNews($(this)); return false;\' style=\'float: right; margin-right: 1%;\'><span class="glyphicon glyphicon-thumbs-up"></span></a>' +
+		'<a href=\'#\' class=\'deleteNews\' onclick=\'deleteNews($(this)); return false;\'><span class="glyphicon glyphicon-trash"></span></a><br></div>' + 
 		'<div class=\'text-center\'><a href=\'#\' class=\'showComments\' onclick=\'showComments(\"' + data._id + '\", ' + '$(this)); return false;\'>[ПОКАЗАТЬ КОММЕНТАРИИ]</a></div>');
 	}
 	$("img").error(function () {
@@ -181,34 +181,13 @@ socket.on('noNewsComments', function(data){
 
 socket.on('newsCommentSent', function(comment, id, commentCount){
 	var fff = '[data-newskey = "' + id + '"]';
-	if (!userData.isModerator) {$(fff).append('<div class=\'commentItem\' data-commentCount=\'' + commentCount + '\'>' + comment.login + ': ' + comment.comment + '</div><br>');}
+	if (!userData.isModerator) {$(fff).append('<br><div class=\'commentItem\' data-commentCount=\'' + commentCount + '\'>' + comment.login + ': ' + comment.comment + '</div>');}
 	else {
-		$(fff).append('<br><br><div class=\'commentItem\' data-commentCount=\'' + commentCount + '\'>' + comment.login + ': ' + comment.comment + '<a href=\'#\' class=\'deleteMessage\' onclick=\'deleteComment(\"' + commentCount+'\", \"' + id + '\"); return false\'>удалить</a></div>');
+		$(fff).append('<br><div class=\'commentItem\' data-commentCount=\'' + commentCount + '\'>' + comment.login + ': ' + comment.comment + '<a href=\'#\' class=\'deleteMessage\' onclick=\'deleteComment(\$(this), "' + commentCount+'\", \"' + id + '\"); return false\'>удалить</a></div>');
 	}
 });
 
-function deleteComment(commentCount, id){
-	var confirmData = {_id: userData._id, session: document.cookie};
-	var deleteData = {commentCount: commentCount, _id: id};
-	socket.emit('deleteComment', deleteData, confirmData);
-}
 
-
-
-function showComments(id, clickedItem) {
-	socket.emit('newsCommentsNeeded', id);
-	var commentFormPlace = $(clickedItem).parent();
-	$(clickedItem).remove();
-	if (!userData.isBanned) {
-		$.ajax({
-						url: 'commentsForm.html',
-						success: function(html){
-							commentFormPlace.html('<div style=\'display: none;\'>' + id + '</div>');
-							commentFormPlace.append(html);
-						}
-					});
-	}
-}
 
 
 
@@ -253,20 +232,16 @@ function onScroll() {
   window.scrollY >= $('.closeWindow').offsetTop ? $('.closeWindow').addClass('sticky') :
                                   $('.closeWindow').removeClass('sticky');
 }
- 
-/*залипание кнопки закрытия окна*/
-function closeWindowSticky() {
-	var closeWindowPositionY = document.querySelector('.closeWindow').offsetTop;
-	var closeWindowPositionX = document.querySelector('.closeWindow').offsetLeft; /*почему то смещается на 8 писелей вправо при залипании*/
-	$( window ).resize(function() {
-		closeWindowPositionX = document.querySelector('.closeWindow').offsetLeft;
-	});
+
+function menuSticky() {
+	var closeWindowPositionY = document.querySelector('.navbar').offsetTop;
 	$(window).scroll(function(){										
 		if(window.scrollY > closeWindowPositionY) {
-			document.querySelector('.closeWindow').classList.add('sticky')
-			$('.closeWindow').css('left', closeWindowPositionX);
+			document.querySelector('.navbar').classList.add('stickyMenu', 'container');
+			document.querySelector('#tabsData').classList.add('tabsDataSticky');
 		}	else {
-			document.querySelector('.closeWindow').classList.remove('sticky');
+			document.querySelector('.navbar').classList.remove('stickyMenu', 'container');
+			document.querySelector('#tabsData').classList.remove('tabsDataSticky');
 		}									
 												
 	});
@@ -337,7 +312,7 @@ function deletePropose(proposeClicked){
 function deleteNews(newsClicked){
 	var confirmDelete = confirm('Уверен?');
 	if (confirmDelete) {
-		var newsToDelete = newsClicked.prev().attr('data-newskey');
+		var newsToDelete = newsClicked.parent().attr('data-newskey');
 		var confirmData = {_id: userData._id, session: document.cookie};
 		socket.emit('deleteNews', newsToDelete, confirmData);
 		newsClicked.prev().remove();
@@ -385,6 +360,30 @@ function delete_cookie ()
   var cookie_date = new Date ( );  // Текущая дата и время
   cookie_date.setTime ( cookie_date.getTime() - 10000 );
   document.cookie += "; expires=" + cookie_date.toGMTString();
+}
+
+function deleteComment(comment, commentCount, id){
+	var confirmData = {_id: userData._id, session: document.cookie};
+	var deleteData = {commentCount: commentCount, _id: id};
+	socket.emit('deleteComment', deleteData, confirmData);
+	$(comment).parent().remove();
+}
+
+
+
+function showComments(id, clickedItem) {
+	socket.emit('newsCommentsNeeded', id);
+	var commentFormPlace = $(clickedItem).parent();
+	$(clickedItem).remove();
+	if (!userData.isBanned) {
+		$.ajax({
+						url: 'commentsForm.html',
+						success: function(html){
+							commentFormPlace.html('<div style=\'display: none;\'>' + id + '</div>');
+							commentFormPlace.append(html);
+						}
+					});
+	}
 }
 
 $("#logoff").click(function(){

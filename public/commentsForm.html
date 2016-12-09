@@ -17,7 +17,7 @@
 		}
 		$(this).children('.commentGroup').children('.comment').val('')
 		var fff = '[data-newskey = "' + newsId + '"]';
-		$(fff).append('<div class=\'commentItem\'>' + userData.login + ': ' + comment + '</div><br>');
+		$(fff).append('<br><div class=\'commentItem\'>' + userData.login + ': ' + comment + '</div><br>');
 		return false;
 	});
 </script>

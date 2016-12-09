@@ -23,7 +23,7 @@ $(".tab").click(function(){ /*переключение вкладок*/
 						$('.loader').removeClass('loading');
 						$("#tabsData").append(html);
 						$(".navbar-collapse").removeClass("in");
-						closeWindowSticky(); /*функция залипания крестика здесь, чтоб работала ссылка на его класс, т.к. он присутствует только в табсдатах*/
+						menuSticky();
 					}
 				});
 	}			

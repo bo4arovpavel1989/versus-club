@@ -2,7 +2,7 @@
 		var userData = {}; /*пользовательские данные*/
 		var loggedIn = false; /*переменная проверяет совершен ли аторизованный вход в систему*/
 		var loginButtonClicked = false;
-		var ipServer = 'http://localhost:8080'
+		var ipServer = 'http://109.120.138.53:8080'
 		var socket = io.connect(ipServer);;
 		var session;
 		var sessionArray;
