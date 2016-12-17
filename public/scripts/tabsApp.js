@@ -1,7 +1,7 @@
 ﻿$("#tabsData").empty();
 $('.loader').addClass('loading');
 $.ajax({
-					url: 'crowdfunding.html',
+					url: '../views/crowdfunding.html',
 					success: function(html){
 						$('.loader').removeClass('loading');
 						$("#tabsData").empty();
@@ -14,7 +14,7 @@ $(".tab").click(function(){ /*переключение вкладок*/
 	if (!$(this).parent().hasClass('active')) {
 		$('.active').removeClass("active");
 		$(this).parent().addClass("active");
-		var targetFile = $(this).html() + ".html";
+		var targetFile = '../views/' + $(this).html() + ".html";
 		$("#tabsData").empty();
 		$('.loader').addClass('loading');
 		$.ajax({

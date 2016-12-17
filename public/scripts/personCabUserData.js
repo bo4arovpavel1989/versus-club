@@ -7,7 +7,7 @@ $(document).ready(function() {
    if(loggedIn && !userData.isBanned){ /*если юзер успешно залогинился, приветствуем его и выводим окошко для сообщений*/
 	$("#welcome").append("WELCOME " + userData.login + "!");
 	$.ajax({
-					url: "messageWindow.html",
+					url: "../views/messageWindow.html",
 					success: function(html){
 						$("#forMessageWindow").append(html);
 					}
@@ -17,7 +17,7 @@ $(document).ready(function() {
 		$("#welcome").append("You`r banned, " + userData.login);
 	}
 	$.ajax({ /*выводим вкладки*/
-				url: "navpills.html",
+				url: "../views/navpills.html",
 				success: function(html){
 				$("#nav-tabs").append(html);
 			}
@@ -266,7 +266,7 @@ function masterWindow() {
 	if (!isMasterWindowOpened) {
 	isMasterWindowOpened = true;	
 	$.ajax({
-					url: "masterWindow.html",
+					url: "../views/masterWindow.html",
 					success: function(html){
 						$("#forMessageWindow").append(html);
 						$('#masterWindow').show(600);
@@ -279,7 +279,7 @@ function moderatorWindow() {
 	if (!isModeratorWindowOpened) {
 	isModeratorWindowOpened = true;	
 	$.ajax({
-					url: "moderatorWindow.html",
+					url: "../views/moderatorWindow.html",
 					success: function(html){
 						$("#forMessageWindow").append(html);
 						$('#moderatorWindow').show(600);
@@ -377,7 +377,7 @@ function showComments(id, clickedItem) {
 	$(clickedItem).remove();
 	if (!userData.isBanned) {
 		$.ajax({
-						url: 'commentsForm.html',
+						url: '../views/commentsForm.html',
 						success: function(html){
 							commentFormPlace.html('<div style=\'display: none;\'>' + id + '</div>');
 							commentFormPlace.append(html);

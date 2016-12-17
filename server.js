@@ -12,8 +12,8 @@ var redis = require('redis');
 var redisClient = redis.createClient();
 var io = require('socket.io')(server);
 
-var socketioRequests = require('./socketiorequests').socketioRequests;
-var router = require('./router').router;
+var socketioRequests = require('./lib/socketiorequests').socketioRequests;
+var router = require('./lib/router').router;
 console.log("Server runs");
 		
 

@@ -1,7 +1,7 @@
 var emitNewsCounter = 0;
 if (userData.isEditor) {
 	$.ajax({
-					url: "newsForm.html",
+					url: "../views/newsForm.html",
 					success: function(html){
 						$("#newsFormToLoad").append(html);
 					}

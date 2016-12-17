@@ -53,7 +53,7 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#750606', end
 
 
 #logo {
-	background-image: url('images/logo.png');
+	background-image: url('../images/logo.png');
 	background-size: contain;
 	background-repeat: no-repeat;
 	background-position: center;
@@ -346,8 +346,8 @@ body {
 	margin-left: 20%;
 	margin-right: auto;
 	background-color: #D9E3E2 ;
-	border-radius: 30%;
-	padding: 10px 10px 10px 20px;
+	border-radius: 5px;
+	padding: 5px 10px 5px 20px;
 	width: 70%;
 }
 .commentsForm {

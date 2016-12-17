@@ -3,7 +3,7 @@
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1">
  <meta charset="utf-8">
-<link rel="stylesheet" type="text/css" href="bootstrap.min.css" />
+<link rel="stylesheet" type="text/css" href="/css/bootstrap.min.css" />
 </head>
 <body>
 <div class="container">
@@ -87,10 +87,10 @@
 	</div>
  </form>
 </div>
-	<script src="/jquery2.js"></script>
-	<script src="/socket.io.js"></script>
-	<script src="/app.js"></script>
-	<script src='/options.js'></script>
+	<script src="/api/jquery2.js"></script>
+	<script src="/api/socket.io.js"></script>
+	<script src="/scripts/app.js"></script>
+	<script src='/scripts/options.js'></script>
 	<script>
 		socket.on('takeData', function(data){
 			$('#sessionforavatar').val(document.cookie);

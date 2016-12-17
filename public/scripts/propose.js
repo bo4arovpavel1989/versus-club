@@ -1,7 +1,7 @@
 screenPosition = 0;
 if (loggedIn) { /*форма предложки открывается только для авторизованных*/
 	$.ajax({
-					url: "proposalForm.html",
+					url: "../views/proposalForm.html",
 					success: function(html){
 						$("#contentToPropose").append(html);
 					}

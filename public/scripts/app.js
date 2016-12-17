@@ -22,7 +22,7 @@
 			console.log(userData);
 			$("#loginFormToHide").remove();
 				$.ajax({
-					url: "personalcabinet.html",
+					url: "../views/personalcabinet.html",
 					success: function(html){
 						$("#contentToUpload").append(html);
 					}
@@ -95,7 +95,7 @@
 			$("#tabsData").empty();
 			$('.loader').addClass('loading');
 			$.ajax({
-					url: 'crowdfunding.html',
+					url: '../views/crowdfunding.html',
 					success: function(html){
 						$('.loader').removeClass('loading');
 						$("#tabsData").hide();
