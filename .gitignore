@@ -2,3 +2,5 @@ serverlog.txt
 /public/images/
 /public/avatars/
 dump.rdb
+/lib/credentials.js
+credentials.js
