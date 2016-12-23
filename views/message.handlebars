@@ -1,0 +1,14 @@
+	{{#each message}}
+	{{#if isModeratorView}}
+		<li class= 'message' data-messagenick={{messageNick}} data-messageID={{messageID}}>
+	{{else}}
+		<li class = 'message' >
+	{{/if}}
+	<div class='messagenick'><a href='#' data-login={{messageNick}} onclick='appealTo($(this)); return false' class='appealTo'>{{messageNick}}</a></div>
+	<div class='avatarMessage' style='background-image: url({{avatarUrl}})'></div>
+	<blockquote class='messagebody'>{{message}}</blockquote></li>
+	{{#if isModeratorView}}
+		<a href='#' class='deleteMessage' onclick='deleteMessage($(this)); return false;'>удалить</a> 
+		<a href='#' class='banAuthor' onclick='banAuthor($(this)); return false;'>бан/разбан</a>
+	{{/if}}
+	{{/each}}

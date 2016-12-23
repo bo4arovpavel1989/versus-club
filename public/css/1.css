@@ -38,6 +38,10 @@
 	z-index: 100;
 }
 
+#money {
+	padding-bottom: 30px;
+}
+
 #welcome {
 	color: #E8E8E9;
 	border-radius: 20px;
@@ -353,8 +357,9 @@ body {
 .commentsForm {
 	margin-top: 20px;
 }
-.newsItem{
-	border-top: 0.2px solid black;
+.commentsSection{
+	border-bottom: 0.2px solid black;
+	padding-bottom: 20px;
 }
 .hiddenwindow {
 	

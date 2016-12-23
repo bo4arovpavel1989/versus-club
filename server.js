@@ -1,13 +1,12 @@
 ﻿var express = require('express');
 var bodyParser = require('body-parser');
-var engines = require('consolidate');
+var handlebars = require('express-handlebars');
 var app = express();
 var server = require('http').createServer(app);
 app.use(express.static(__dirname + '/public'));
 app.use(bodyParser.urlencoded({ extended: false }));
-app.engine('html', engines.hogan);
-
-
+app.engine('handlebars', handlebars({defaultLayout: 'main'}));
+app.set('view engine', 'handlebars');
 var redis = require('redis');
 var redisClient = redis.createClient();
 var io = require('socket.io')(server);

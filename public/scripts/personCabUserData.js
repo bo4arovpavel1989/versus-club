@@ -49,23 +49,6 @@ if (!userData.isModerator) {
 });
 
 
-
-				
-socket.on('messageSent', function(data, data2){ /*принимаем сообщения (архив) от сервера*/
-	if (!userData.isModerator) {
-	$("#messagesReceived").append("<li class = 'message' ><div class=\'messagenick\'><a href='#' data-login=\'" + data.messageNick + "\' onclick=\'appealTo($(this)); return false\' class=\'appealTo\'>" + data.messageNick + "</a>:</div>" +
-	"<div class=\'avatarMessage\' style=\"background-image: url(" + data.avatarUrl + ");\"></div>" +
-	"<blockquote class=\'messagebody\'>" + data.message + "</blockquote></li>");
-	} else {
-		$("#messagesReceived").append("<li class = 'message' data-messagenick=\'" + data.messageNick + "\' data-messageID=\'" + data2 + "\'>" + 
-		"<div class=\'messagenick\'><a href='#' data-login=\'" + data.messageNick + "\' onclick=\'appealTo($(this)); return false\' class=\'appealTo\'>" + data.messageNick + "</a>:</div>" +
-		"<div class=\'avatarMessage\' style=\"background-image: url(" + data.avatarUrl + ");\"></div>" +
-		"<blockquote class=\'messagebody\'>" + data.message + "</blockquote></li>" + 
-		"<a href='#' class='deleteMessage' onclick=\'deleteMessage($(this)); return false;\'>удалить </a>" + 
-		"<a href='#' class='banAuthor' onclick=\'banAuthor($(this)); return false;\'> бан/разбан</a>");
-	}
-});
-
 socket.on('votedLoginSend', function(data){ /*принимаем от сервера список проголосовавших, если текущий юзер проголосовау уже, то скрываем выбор и выводим результат*/
 	var votedOne;
 	if (loggedIn) {
@@ -123,23 +106,6 @@ if (!loggedIn) { /*скрываем голосование от неавтори
 	
 }
 
-socket.on('proposeSend', function(data){ /*принимаем от сервера список предложек*/
-	var dataToFind = "data-propose=\'" + data.propose + "\'";
-	var dataToFindLogin = "data-proposelogin=\'" + data.login + "\'";
-	var proposeLike = data.like;
-	if (!userData.isModerator) {
-		$("#proposalItems").append('<div class=\'proposalItem\'' + dataToFind + dataToFindLogin +'> Предложена пара на голосование: <div class =\'alert alert-info\'>' + 
-		data.propose + '</div>' + ' ' + '<a href=\'#\' class=\'proposePlus\' onclick=\'likePropose($(this)); return false;\' ><strong>[' + data.like + ']</strong> - <span class="glyphicon glyphicon-thumbs-up"></span></a>' + '</div>');
-	} else {
-		$("#proposalItems").append('<div class=\'proposalItem\'' + dataToFind + dataToFindLogin +'> Предложена пара на голосование: <div class =\'alert alert-info\'>' + 
-		data.propose + '</div>' + ' ' + '<a href=\'#\' class=\'proposePlus\' onclick=\'likePropose($(this)); return false;\' ><strong>[' 
-		+ data.like + ']</strong> - <span class="glyphicon glyphicon-thumbs-up"></span></a>' + '</div>' + 
-		'<a href=\'#\' class=\'deletePropose\' onclick=\'deletePropose($(this)); return false;\'>удалить</a>' + 
-		'<a href=\'#\' class=\'banAuthor\' onclick=\'banProposeAuthor($(this)); return false;\'> бан/разбан</a><br>');
-	}
-	/*window.scrollTo(0, screenPosition); старая версия - когда перезагрузка всех предложек после лайка и возврат к той же точке*/
-});
-
 socket.on('newPlus', function(data, like){
 	var fff = '[data-propose = "' + data + '"]';
 	$(fff).find('.proposePlus').html('<strong>[' + like + ']</strong> - <span class="glyphicon glyphicon-thumbs-up"></span>');
@@ -158,7 +124,7 @@ socket.on('newsSend', function(data){
 		'<p class=\'newsbody\'>' + data.body + '</p>' + 
 		'<strong  style=\'float: right;\'>[' + data.likes + ']</strong>' +
 		'<a href=\'#\' class=\'likeNews\' onclick=\'likeNews($(this)); return false;\' style=\'float: right; margin-right: 1%;\'><span class="glyphicon glyphicon-thumbs-up"></span></a><br></div>' +
-		'<div class=\'text-center\'><a href=\'#\' class=\'showComments\' onclick=\'showComments(\"' + data._id + '\", ' + '$(this)); return false;\'>[ПОКАЗАТЬ КОММЕНТАРИИ]</a></div>');
+		'<div class=\'text-center commentsSection\'><a href=\'#\' class=\'showComments\' onclick=\'showComments(\"' + data._id + '\", ' + '$(this)); return false;\'>[ПОКАЗАТЬ КОММЕНТАРИИ]</a></div>');
 	} else {
 		$('#newsToLoad').append('<div class = \'newsItem\' data-newskey=\'' + data._id + '\'><h2 class=\'newsTitle\'>' + data.title + '</h2>' +
 		'<p class = \'newsDate\'><br>' + data.date +
@@ -167,7 +133,7 @@ socket.on('newsSend', function(data){
 		'<strong  style=\'float: right;\'>[' + data.likes + ']</strong>' +
 		'<a href=\'#\' class=\'likeNews\' onclick=\'likeNews($(this)); return false;\' style=\'float: right; margin-right: 1%;\'><span class="glyphicon glyphicon-thumbs-up"></span></a>' +
 		'<a href=\'#\' class=\'deleteNews\' onclick=\'deleteNews($(this)); return false;\'><span class="glyphicon glyphicon-trash"></span></a><br></div>' + 
-		'<div class=\'text-center\'><a href=\'#\' class=\'showComments\' onclick=\'showComments(\"' + data._id + '\", ' + '$(this)); return false;\'>[ПОКАЗАТЬ КОММЕНТАРИИ]</a></div>');
+		'<div class=\'text-center commentsSection\'><a href=\'#\' class=\'showComments\' onclick=\'showComments(\"' + data._id + '\", ' + '$(this)); return false;\'>[ПОКАЗАТЬ КОММЕНТАРИИ]</a></div>');
 	}
 	$("img").error(function () {
 		$(this).hide();
@@ -228,11 +194,6 @@ socket.on('bannedNotFound', function(){
 	$('.pagination > li.active').removeClass('active');
 });
 
-function onScroll() {
-  window.scrollY >= $('.closeWindow').offsetTop ? $('.closeWindow').addClass('sticky') :
-                                  $('.closeWindow').removeClass('sticky');
-}
-
 function menuSticky() {
 	var closeWindowPositionY = document.querySelector('.navbar').offsetTop;
 	$(window).scroll(function(){										
@@ -288,26 +249,7 @@ function moderatorWindow() {
 	}
 }
 
-function deleteMessage(messageClicked){
-	var messageIDToDelete = messageClicked.prev().attr('data-messageID');
-	var confirmData = {_id: userData._id, session: document.cookie};
-	socket.emit('deleteMessage', messageIDToDelete, confirmData);
-	messageClicked.prev().remove();
-	messageClicked.next().remove();
-	messageClicked.remove();
-}
 
-function deletePropose(proposeClicked){
-	var proposeLoginToDelete = proposeClicked.prev().attr('data-proposelogin');
-	var proposeToDelete = proposeClicked.prev().attr('data-propose');
-	var deleteData = {login: proposeLoginToDelete, propose: proposeToDelete};
-	var confirmData = {_id: userData._id, session: document.cookie};
-	console.log(deleteData);
-	socket.emit('deletePropose', deleteData, confirmData);
-	proposeClicked.prev().remove();
-	proposeClicked.next().remove();
-	proposeClicked.remove();
-}
 
 function deleteNews(newsClicked){
 	var confirmDelete = confirm('Уверен?');
@@ -320,16 +262,7 @@ function deleteNews(newsClicked){
 	}
 }
 
-function banAuthor(messageClicked){
-	var confirmData = {_id: userData._id, session: document.cookie};
-	var messageNickToBan = messageClicked.prev().prev().attr('data-messagenick');
-	socket.emit('banAuthor', messageNickToBan, confirmData);
-}
-function banProposeAuthor(proposeClicked){
-	var confirmData = {_id: userData._id, session: document.cookie};
-	var messageNickToBan = proposeClicked.prev().prev().attr('data-proposeLogin');
-	socket.emit('banAuthor', messageNickToBan, confirmData);
-}
+
 
 function askForBanList(clickedPage) {
 	var pageNumber = clickedPage.html();
