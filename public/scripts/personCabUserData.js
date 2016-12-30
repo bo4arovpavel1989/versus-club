@@ -30,6 +30,13 @@ $(document).ready(function() {
 	if(userData.isModerator == true) {
 		$('#welcomesection').prepend("<a href='#' onclick='moderatorWindow(); return false;' id='moderatorwindowstart'>Окно модератора  </a>");
 	}	
+	
+	$("#logoff").click(function(){
+		socket.emit('logoff', document.cookie);
+		delete_cookie ();
+		console.log(document.cookie);
+		window.location.assign(ipServer);
+	});
 });
 		
 
@@ -98,13 +105,6 @@ socket.on('votesSend', function(data){ /*принимаем результаты
 	"</div><br><br>");
 });
 
-if (!loggedIn) { /*скрываем голосование от неавторизованных*/
-	$("#logoff").hide();
-	$("#voteForm").hide();
-	$("#voteResult").hide();
-	$("#unauthorMess").append("<p>Голосование доступно только авторизованным пользователям</p>");
-	
-}
 
 socket.on('newPlus', function(data, like){
 	var fff = '[data-propose = "' + data + '"]';
@@ -115,46 +115,6 @@ socket.on('newNewsLike', function(data, like){
 	var fff = '[data-newskey = "' + data + '"]';
 	$(fff).find('strong').html('[' + like + ']');
 });
-
-socket.on('newsSend', function(data){
-	if (!userData.isEditor) {
-		$('#newsToLoad').append('<div class = \'newsItem\' data-newskey=\'' + data._id + '\'><h2 class=\'newsTitle\'>' + data.title + '</h2>' +
-		'<p class = \'newsDate\'><br>' + data.date +
-		'<p class= \'newsImage\'><img src =\'' + data.img + '\' alt = \'newsimage\' width=\'45%\' height=\'45%\'></p>' +
-		'<p class=\'newsbody\'>' + data.body + '</p>' + 
-		'<strong  style=\'float: right;\'>[' + data.likes + ']</strong>' +
-		'<a href=\'#\' class=\'likeNews\' onclick=\'likeNews($(this)); return false;\' style=\'float: right; margin-right: 1%;\'><span class="glyphicon glyphicon-thumbs-up"></span></a><br></div>' +
-		'<div class=\'text-center commentsSection\'><a href=\'#\' class=\'showComments\' onclick=\'showComments(\"' + data._id + '\", ' + '$(this)); return false;\'>[ПОКАЗАТЬ КОММЕНТАРИИ]</a></div>');
-	} else {
-		$('#newsToLoad').append('<div class = \'newsItem\' data-newskey=\'' + data._id + '\'><h2 class=\'newsTitle\'>' + data.title + '</h2>' +
-		'<p class = \'newsDate\'><br>' + data.date +
-		'<p class= \'newsImage\'><img src =\'' + data.img + '\' alt = \'newsimage\' width=\'45%\' height=\'45%\'></p>' +
-		'<p class=\'newsbody\'>' + data.body + '</p>' + 
-		'<strong  style=\'float: right;\'>[' + data.likes + ']</strong>' +
-		'<a href=\'#\' class=\'likeNews\' onclick=\'likeNews($(this)); return false;\' style=\'float: right; margin-right: 1%;\'><span class="glyphicon glyphicon-thumbs-up"></span></a>' +
-		'<a href=\'#\' class=\'deleteNews\' onclick=\'deleteNews($(this)); return false;\'><span class="glyphicon glyphicon-trash"></span></a><br></div>' + 
-		'<div class=\'text-center commentsSection\'><a href=\'#\' class=\'showComments\' onclick=\'showComments(\"' + data._id + '\", ' + '$(this)); return false;\'>[ПОКАЗАТЬ КОММЕНТАРИИ]</a></div>');
-	}
-	$("img").error(function () {
-		$(this).hide();
-	});
-});
-
-socket.on('noNewsComments', function(data){
-	var fff = '[data-newskey = "' + data + '"]';
-	$(fff).append('<div class=\'text-center\'>КОММЕНТАРИЕВ ПОКА НЕТ</div><br>');
-});
-
-socket.on('newsCommentSent', function(comment, id, commentCount){
-	var fff = '[data-newskey = "' + id + '"]';
-	if (!userData.isModerator) {$(fff).append('<br><div class=\'commentItem\' data-commentCount=\'' + commentCount + '\'>' + comment.login + ': ' + comment.comment + '</div>');}
-	else {
-		$(fff).append('<br><div class=\'commentItem\' data-commentCount=\'' + commentCount + '\'>' + comment.login + ': ' + comment.comment + '<a href=\'#\' class=\'deleteMessage\' onclick=\'deleteComment(\$(this), "' + commentCount+'\", \"' + id + '\"); return false\'>удалить</a></div>');
-	}
-});
-
-
-
 
 
 socket.on('banListSent', function(datas){
@@ -207,6 +167,7 @@ function menuSticky() {
 												
 	});
 }
+
 function appealTo(nickClicked) {
 	$('#messageWindow').addClass('activeWindow');
 	 if($('#messageForm').hasClass('hiddenwindow')) {
@@ -227,12 +188,12 @@ function masterWindow() {
 	if (!isMasterWindowOpened) {
 	isMasterWindowOpened = true;	
 	$.ajax({
-					url: "../views/masterWindow.html",
-					success: function(html){
-						$("#forMessageWindow").append(html);
-						$('#masterWindow').show(600);
-					}
-				});
+				url: "../views/masterWindow.html",
+				success: function(html){
+					$("#forMessageWindow").append(html);
+					$('#masterWindow').show(600);
+				}
+			});
 	}
 }
 
@@ -251,19 +212,6 @@ function moderatorWindow() {
 
 
 
-function deleteNews(newsClicked){
-	var confirmDelete = confirm('Уверен?');
-	if (confirmDelete) {
-		var newsToDelete = newsClicked.parent().attr('data-newskey');
-		var confirmData = {_id: userData._id, session: document.cookie};
-		socket.emit('deleteNews', newsToDelete, confirmData);
-		newsClicked.prev().remove();
-		newsClicked.remove();
-	}
-}
-
-
-
 function askForBanList(clickedPage) {
 	var pageNumber = clickedPage.html();
 	socket.emit('banListNeeded', pageNumber);
@@ -271,6 +219,7 @@ function askForBanList(clickedPage) {
 	clickedPage.parent().addClass('active');
 	shortPagination();
 }
+
 function shortPagination() {
 	$('.pagination > li:not(.active)').addClass('hiddenPagination');
 	$('.pagination li:first-child').removeClass('hiddenPagination');
@@ -295,33 +244,6 @@ function delete_cookie ()
   document.cookie += "; expires=" + cookie_date.toGMTString();
 }
 
-function deleteComment(comment, commentCount, id){
-	var confirmData = {_id: userData._id, session: document.cookie};
-	var deleteData = {commentCount: commentCount, _id: id};
-	socket.emit('deleteComment', deleteData, confirmData);
-	$(comment).parent().remove();
-}
 
 
 
-function showComments(id, clickedItem) {
-	socket.emit('newsCommentsNeeded', id);
-	var commentFormPlace = $(clickedItem).parent();
-	$(clickedItem).remove();
-	if (!userData.isBanned) {
-		$.ajax({
-						url: '../views/commentsForm.html',
-						success: function(html){
-							commentFormPlace.html('<div style=\'display: none;\'>' + id + '</div>');
-							commentFormPlace.append(html);
-						}
-					});
-	}
-}
-
-$("#logoff").click(function(){
-	socket.emit('logoff', document.cookie);
-	delete_cookie ();
-	console.log(document.cookie);
-	window.location.assign(ipServer);
-});

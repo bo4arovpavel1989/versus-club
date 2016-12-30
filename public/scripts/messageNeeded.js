@@ -1,6 +1,7 @@
 var emitCounter = 0;
-
-getMessages();
+$(document).ready(function(){
+	getMessages();
+});
 
 function getMessages () {
 			var moderatorQuery = (userData.isModerator == true) ? 1 : 0;

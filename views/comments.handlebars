@@ -1,0 +1,11 @@
+{{#each comments}}
+{{#if isAvailable}}
+	<br>
+	<div class='commentItem' data-commentCount={{commentCount}}>
+		{{login}}: {{comment}}
+	{{#if isModeratorView}}
+		<a href='#' class='deleteMessage' onclick='deleteComment($(this), {{commentCount}}, "{{id}}"); return false;'>удалить</a>
+	{{/if}}
+	</div>
+{{/if}}	
+{{/each}}	
