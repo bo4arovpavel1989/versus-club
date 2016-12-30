@@ -1,4 +1,4 @@
-var emitNewsCounter = 0;
+﻿var emitNewsCounter = 0;
 
 $(document).ready(function(){
 
@@ -25,7 +25,7 @@ function getNews () {
 					dataType: 'html',
 					success: function(html){
 						$("#newsToLoad").append(html);
-						$("img").error(function () {
+						$("img").on('error', function () {
 							$(this).hide();
 						});
 					}
