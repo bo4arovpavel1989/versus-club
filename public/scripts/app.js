@@ -129,21 +129,7 @@ function checkEmail() {
 		email.setCustomValidity("");
 	 });
 }
-	
-function closeTab(){
-	$("#tabsData").empty();
-	$('.loader').addClass('loading');
-	$.ajax({
-			url: '../views/crowdfunding.html',
-			success: function(html){
-				$('.loader').removeClass('loading');
-				$("#tabsData").hide();
-				$("#tabsData").append(html);
-				$("#tabsData").fadeIn(600);
-			}
-		});
-}
-		
+			
 socket.on('takeData', function(data){
 	loggedIn = true;
 	userData = data;

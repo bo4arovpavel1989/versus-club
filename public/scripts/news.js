@@ -1,4 +1,4 @@
-﻿var emitNewsCounter = 0;
+var emitNewsCounter = 0;
 
 $(document).ready(function(){
 

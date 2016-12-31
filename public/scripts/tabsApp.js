@@ -6,6 +6,7 @@
 						success: function(html){
 							$('.loader').removeClass('loading');
 							$("#tabsData").empty();
+							$("#tabsData").addClass('nopadding');
 							$("#tabsData").append(html);
 						}
 					});
@@ -21,6 +22,7 @@
 			$('.active').removeClass("active");
 			$(this).parent().addClass("active");
 			var targetFile = '../views/' + $(this).html() + ".html";
+			$("#tabsData").removeClass('nopadding');
 			$("#tabsData").empty();
 			$('.loader').addClass('loading');
 			$.ajax({
@@ -36,5 +38,19 @@
 	});
 
 });				
-				
+
+function closeTab(){
+	$("#tabsData").empty();
+	$('.loader').addClass('loading');
+	$.ajax({
+			url: '../views/crowdfunding.html',
+			success: function(html){
+				$('.loader').removeClass('loading');
+				$("#tabsData").hide();
+				$("#tabsData").addClass('nopadding');
+				$("#tabsData").append(html);
+				$("#tabsData").fadeIn(600);
+			}
+		});
+}				
 

@@ -38,8 +38,17 @@
 	z-index: 100;
 }
 
+.nopadding {
+	padding: 0 0 0 0 !important;
+}
+
+#battler1, #battler2 {
+	padding: 0 0 0 0;
+	text-align: center;
+}
+
 #money {
-	padding-bottom: 30px;
+	padding: 5px 0 30px 0;
 }
 
 #welcome {
@@ -200,7 +209,7 @@ padding-right: 0px;
 	padding-right: 0px;
 }
 #tabsData {
-	padding: 10px 10% 10px 10% !important;
+	padding: 10px 10% 10px 10%;
 	 }
 .tabsDataSticky {
 	margin-top: 50px;
