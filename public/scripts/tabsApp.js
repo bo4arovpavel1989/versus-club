@@ -1,16 +1,6 @@
 ﻿$(document).ready(function(){
-	$("#tabsData").empty();
-	$('.loader').addClass('loading');
-	$.ajax({
-						url: '../views/crowdfunding.html',
-						success: function(html){
-							$('.loader').removeClass('loading');
-							$("#tabsData").empty();
-							$("#tabsData").addClass('nopadding');
-							$("#tabsData").append(html);
-						}
-					});
-
+	
+	closeTab();
 					
 	if(userData.isModerator) {
 		$('#banListCall').show();

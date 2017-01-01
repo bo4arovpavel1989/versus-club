@@ -116,42 +116,18 @@ socket.on('newNewsLike', function(data, like){
 	$(fff).find('strong').html('[' + like + ']');
 });
 
-
-socket.on('banListSent', function(datas){
-	$('#banListItems').empty();
-	datas.forEach(function(data){
-		$('#banListItems').append('<br><li class="banListItem"><div class=\'bannedNick\' data-messagenick=\'' + 
-		data + '\'></div><div style="display: inline;"><span class="glyphicon glyphicon-user" style="margin-right: 20px;"></span>' + 
-		data + '</div><a href="#" onclick="banAuthor($(this)); $(this).closest(\'li\').remove(); return false;" class="banListItemRemove"><span class="glyphicon glyphicon-remove"></span></a></li><br>');
-	});
-});
-
 socket.on('banListCardinality', function(data){
 	if(data !==0) 
 	numberOfPages = data/10; /*banned persons per page*/
+	numberOfPages = Math.ceil(numberOfPages);
 	if (numberOfPages > 1) {
 		for (var pageNum = 2; pageNum <= numberOfPages; pageNum++) { /*first page always presents, so we start from the second*/
 			$('.pagination').append('<li><a href=\'#\' class=\'banListPage\' onclick=\'askForBanList($(this)); return false;\'>' + pageNum + '</a></li>');
-			console.log(pageNum);
 		}
 		if (numberOfPages > 8) {
 			shortPagination();
 		}
 	}
-});
-
-socket.on('heIsBanned', function(data){
-	$('#banListItems').empty();
-	$('#banListItems').append('<br><li class="banListItem"><div class=\'bannedNick\' data-messagenick=\'' + 
-		data + '\'></div><div style="display: inline;"><span class="glyphicon glyphicon-user" style="margin-right: 20px;"></span>' + 
-		data + '</div><a href="#" onclick="banAuthor($(this)); $(this).closest(\'li\').remove(); return false;" class="banListItemRemove"><span class="glyphicon glyphicon-remove"></span></a></li><br>');
-		$('.pagination > li.active').removeClass('active');
-});
-
-socket.on('bannedNotFound', function(){
-	$('#banListItems').empty();
-	$('#banListItems').append('<div><h3>Среди забаненных такого не найдено!</h3></div>');
-	$('.pagination > li.active').removeClass('active');
 });
 
 function menuSticky() {
@@ -208,33 +184,6 @@ function moderatorWindow() {
 					}
 				});
 	}
-}
-
-
-
-function askForBanList(clickedPage) {
-	var pageNumber = clickedPage.html();
-	socket.emit('banListNeeded', pageNumber);
-	$('.pagination > .active').removeClass('active');
-	clickedPage.parent().addClass('active');
-	shortPagination();
-}
-
-function shortPagination() {
-	$('.pagination > li:not(.active)').addClass('hiddenPagination');
-	$('.pagination li:first-child').removeClass('hiddenPagination');
-	$('.pagination li:last-child').removeClass('hiddenPagination');
-	$('.pagination > li.active').removeClass('hiddenPagination');
-	$('.pagination > li.active').next().removeClass('hiddenPagination');
-	$('.pagination > li.active').prev().removeClass('hiddenPagination');
-	$('.pagination > li.active').next().next().removeClass('hiddenPagination');
-	$('.pagination > li.active').prev().prev().removeClass('hiddenPagination');
-	$('.pagination li.hiddenPagination:first-child').before(function(){
-		return '<li>...</li>';
-	});
-	$('.pagination li.hiddenPagination:last-child').before(function(){
-		return '<li>...</li>';
-	});
 }
 
 function delete_cookie ()
