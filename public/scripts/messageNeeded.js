@@ -1,8 +1,10 @@
 var emitCounter = 0;
-$(document).ready(function(){
-	getMessages();
-});
-
+startMessageNeeded();
+function startMessageNeeded(){
+	$(document).ready(function(){
+		getMessages();
+	});
+}
 function getMessages () {
 			var moderatorQuery = (userData.isModerator == true) ? 1 : 0;
 			var messageUrl = ipServer + '/getmessages?counter=' + emitCounter + '&moderatorQuery=' + moderatorQuery;	
@@ -14,6 +16,7 @@ function getMessages () {
 					}
 				});
 }
+
 
 function getMoreMessages() {
 	emitCounter = emitCounter + 11;
@@ -37,3 +40,4 @@ function banAuthor(messageClicked){
 	var messageNickToBan = messageClicked.prev().prev().attr('data-messagenick');
 	socket.emit('banAuthor', messageNickToBan, confirmData);
 }
+

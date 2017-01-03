@@ -1,32 +1,34 @@
 socket.emit('banListPaginationNeeded');
+startBanlist();
 
-$(document).ready(function(){
-	
-	$.ajax({
-			url: ipServer + '/getbanlist?page=1',
-			dataType: 'html',
-			success: function(html){
-				$('#banListItems').empty();
-				$('#banListItems').append(html);
-			}
-	});	
-	
-	$("#searchBanned").submit(function(e){
-		var nickToSearch = $("#search").val();
-		searchBannedUrl = ipServer + '/searchbanned?login=' + nickToSearch;
+function startBanlist(){
+	$(document).ready(function(){
+		
 		$.ajax({
-			url: searchBannedUrl,
-			dataType: 'html',
-			success: function(html){
-				$('#banListItems').empty();
-				$('#banListItems').append(html);
-			}
+				url: ipServer + '/getbanlist?page=1',
+				dataType: 'html',
+				success: function(html){
+					$('#banListItems').empty();
+					$('#banListItems').append(html);
+				}
 		});	
-		return false;
+		
+		$("#searchBanned").submit(function(e){
+			var nickToSearch = $("#search").val();
+			searchBannedUrl = ipServer + '/searchbanned?login=' + nickToSearch;
+			$.ajax({
+				url: searchBannedUrl,
+				dataType: 'html',
+				success: function(html){
+					$('#banListItems').empty();
+					$('#banListItems').append(html);
+				}
+			});	
+			return false;
+		});
+		
 	});
-	
-});
-
+}
 
 function askForBanList(clickedPage) {
 	var pageNumber = clickedPage.html();
@@ -66,4 +68,5 @@ function banAuthor(messageClicked){
 	var messageNickToBan = messageClicked.prev().prev().attr('data-messagenick');
 	socket.emit('banAuthor', messageNickToBan, confirmData);
 }
+
 	

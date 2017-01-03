@@ -61,13 +61,7 @@
 	<script src="/api/jquery2.js"></script>
 	<script src="/api/socket.io.js"></script>
 	<script src="/scripts/app.js"></script>
-	<script>
-	$('#inputLoginReg').keypress(function(key) { /*protect from symbols ' and " in username, because it caueses troubles*/
-        if(key.charCode < 48 && key.charCode > 32) {
-			document.getElementById("inputLoginReg").setCustomValidity("Логин не должен содержать символы: \' \"");
-			return false;
-		}
-    });
-	</script>
+	<script src='/scripts/register.js'></script>
+	<script src="/scripts/socketHandler.js"></script>
 </html>
 </body>

@@ -1,20 +1,23 @@
-$(document).ready(function(){
-	if (userData.activity > ACTIVITY) { /*форма предложки открывается только для авторизованных*/
-		$.ajax({
-						url: "../views/proposalForm.html",
-						success: function(html){
-							$("#contentToPropose").append(html);
-						}
-					});		
-	}
+startPropose();
 
-	if(userData.isEditor) {
-		$('#clearPropose').show();
-	}
-	
-	getProposes();
-});
+function startPropose(){
+	$(document).ready(function(){
+		if (userData.activity > ACTIVITY) { /*форма предложки открывается только для авторизованных*/
+			$.ajax({
+							url: "../views/proposalForm.html",
+							success: function(html){
+								$("#contentToPropose").append(html);
+							}
+						});		
+		}
 
+		if(userData.isEditor) {
+			$('#clearPropose').show();
+		}
+		
+		getProposes();
+	});
+}
 function getProposes(){
 	var moderatorQuery = (userData.isModerator == true) ? 1 : 0;
 	var messageUrl = ipServer + '/getproposes?moderatorQuery=' + moderatorQuery;	
@@ -25,6 +28,12 @@ function getProposes(){
 					$("#proposalItems").append(html);
 				}
 	});
+}
+
+function furtherButton() {
+	$('#proposalItems').empty(); 
+	getProposes(); 
+	window.scroll(0 ,0);
 }
 
 function likePropose(clickedPropose) {
@@ -69,4 +78,5 @@ function deletePropose(proposeClicked){
 		proposeClicked.remove();
 	}
 }
+
 

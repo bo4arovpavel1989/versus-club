@@ -1,20 +1,23 @@
 var emitNewsCounter = 0;
+startNews();
 
-$(document).ready(function(){
+function startNews(){
+	$(document).ready(function(){
 
-	if (userData.isEditor) {
-	$.ajax({
-					url: "../views/newsForm.html",
-					success: function(html){
-						$("#newsFormToLoad").append(html);
-					}
-				});
-	}
-	
-	getNews();	
-	
-	
-});
+		if (userData.isEditor) {
+		$.ajax({
+						url: "../views/newsForm.html",
+						success: function(html){
+							$("#newsFormToLoad").append(html);
+						}
+					});
+		}
+		
+		getNews();	
+		
+		
+	});
+}
 
 
 function getNews () {

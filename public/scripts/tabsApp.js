@@ -15,6 +15,7 @@
 			$("#tabsData").removeClass('nopadding');
 			$("#tabsData").empty();
 			$('.loader').addClass('loading');
+			$(document).off();
 			$.ajax({
 				url: targetFile,
 				success: function(html){

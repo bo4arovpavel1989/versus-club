@@ -1,4 +1,4 @@
-﻿<a href='#' id='clearPropose' onclick='clearPropose(); return false' style='display: none;'>Очистить предложку</a>
+﻿<a href='#' id='clearPropose' onclick='clearPropose(); return false;' style='display: none;'>Очистить предложку</a>
 <h3 class='text-center'>Кого хочет увидеть народ?</h3>
 <a href="#" onclick='$(this).next().show(); return false;' style="color: grey; font-size: large;"><span class='glyphicon glyphicon-question-sign'></span></a>
 <div class="alert alert-warning" style="display: none;">
@@ -11,7 +11,7 @@
 	<div id="proposalItems">
 	</div>
 	<div class='text-center'>
-	<a href='#' class="btn btn-primary btn-lg"  onclick="$('#proposalItems').empty(); getProposes(); window.scroll(0 ,0); return false" style='margin-top: 20px;'>Дальше</a>
+	<a href='#' class="btn btn-primary btn-lg"  onclick="furtherButton(); return false" style='margin-top: 20px;'>Дальше</a>
 	</div>
 </div>
 <script src="/scripts/propose.js"></script>

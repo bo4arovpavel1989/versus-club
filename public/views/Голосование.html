@@ -4,17 +4,9 @@
 <div class="alert alert-warning" style="display: none;">
   <strong>Внимание!</strong> В этот раздел попадают лучшие из предложки. Набравшие по итогам голосования наибольшее количество голосов будут выставлены на сбор средств для проведения баттла.
 </div>
-<form id="voteForm" class="form-horizontal" action="/" method="post" style='display: none;'>
-	<br><br>
-    <p><span class="input-group-addon"><input name="vote" type="radio" value="001" id='firstCandidate'></span> </p>
-    <p><span class="input-group-addon"><input name="vote" type="radio" value="002" id='secondCandidate'></span> </p>
-    <p><span class="input-group-addon"><input name="vote" type="radio" value="003" id='thirdCandidate'></span> </p>
-	<br>
-    <p><input class="btn btn-primary" type="submit" value="Голосовать"></p>
-</form>
 <div id="unauthorMess">
 </div>
-<div id="voteResult" style='display: none;'>
+<div id="voteResult">
 </div>
 <a href='#' id='clearVote' style='display: none;' onclick='clearVote(); return false'>Обнулить голосование</a>
 <script src="/scripts/vote.js"></script>
