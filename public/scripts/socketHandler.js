@@ -92,18 +92,9 @@ socket.on("emailInvalid", function(data){
 
 /*message sckets*/
 socket.on('messageSentRealTime', function(data, data2){   /*разделил прием сообщения из архива и в реальном времени, т.к. они располагаются в разном порядке. В реальном добавляются ПЕРЕД существующими*/
-if (!userData.isModerator) {
-	$("#messagesReceived").prepend("<li class = 'message' ><div class=\'messagenick\'><a href='#' data-login=\'" + data.messageNick + "\' onclick=\'appealTo($(this)); return false\' class=\'appealTo\'>" + data.messageNick + "</a>:</div>" +
-	"<div class=\'avatarMessage\' style=\"background-image: url(" + data.avatarUrl + ");\"></div>" +
-	"<blockquote class=\'messagebody\'>" + data.message + "</blockquote></li>");
-	} else {
-		$("#messagesReceived").prepend("<li class = 'message' data-messagenick=\'" + data.messageNick + "\' data-messageID=\'" + data2 + "\'>" + 
-		"<div class=\'messagenick\'><a href='#' data-login=\'" + data.messageNick + "\' onclick=\'appealTo($(this)); return false\' class=\'appealTo\'>" + data.messageNick + "</a>:</div>" +
-		"<div class=\'avatarMessage\' style=\"background-image: url(" + data.avatarUrl + ");\"></div>" +
-		"<blockquote class=\'messagebody\'>" + data.message + "</blockquote></li>" + 
-		"<a href='#' class='deleteMessage' onclick=\'deleteMessage($(this)); return false;\'>удалить </a>" + 
-		"<a href='#' class='banAuthor' onclick=\'banAuthor($(this)); return false;\'> бан/разбан</a>");
-	}
+	var template = Handlebars.compile( $('#realTimeMessage').html() );
+	data.isModeratorView = userData.isModerator;
+	$('#messagesReceived').prepend( template(data) );
 });
 
 

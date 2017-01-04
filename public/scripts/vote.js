@@ -20,14 +20,14 @@ function submitFormHandler() {
 			console.log(a);
 			var voteData = {votedLogin: userData.login, vote: a, session: document.cookie, _id: userData._id};
 			socket.emit('vote', voteData);
-			$("#voteForm").hide();
-			$("#voteResult").empty();
 			getVotes();
 			return false;
 		});
 }
 
 function getVotes() {
+		$("#voteResult").empty();
+		$("#voteResult").hide();
 		var voteUrl = ipServer + '/getvotes?login=' + userData.login;	
 		$.ajax({
 				url: voteUrl,
