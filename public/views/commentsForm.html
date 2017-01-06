@@ -8,12 +8,11 @@
 </form>
 <script>
 	$('.commentsForm').submit(function(){
-		var confirmData = {_id: userData._id, session: document.cookie};
 		var comment = $(this).children('.commentGroup').children('.comment').val();
 		var newsId = $(this).prev().html();
-		var commentData = {login: userData.login, comment: comment, _id: newsId};
+		var commentData = {login: userData.login, comment: comment, _newsID: newsId, _userID: userData._id, session: document.cookie};
 		if (comment !== '') {
-			socket.emit('newCommentUpload', commentData, confirmData);
+			socket.emit('newCommentUpload', commentData);
 		}
 		$(this).children('.commentGroup').children('.comment').val('')
 		var fff = '[data-newskey = "' + newsId + '"]';

@@ -69,10 +69,9 @@ function deletePropose(proposeClicked){
 	if(confirmAction) {
 		var proposeLoginToDelete = proposeClicked.prev().attr('data-proposelogin');
 		var proposeToDelete = proposeClicked.prev().attr('data-propose');
-		var deleteData = {login: proposeLoginToDelete, propose: proposeToDelete};
-		var confirmData = {_id: userData._id, session: document.cookie};
+		var deleteData = {login: proposeLoginToDelete, propose: proposeToDelete, _id: userData._id, session: document.cookie};
 		console.log(deleteData);
-		socket.emit('deletePropose', deleteData, confirmData);
+		socket.emit('deletePropose', deleteData);
 		proposeClicked.prev().remove();
 		proposeClicked.next().remove();
 		proposeClicked.remove();

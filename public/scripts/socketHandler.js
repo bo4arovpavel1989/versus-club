@@ -53,19 +53,31 @@ socket.on('changeUserdataFailed', function(){
 });
 
 /*userbans sockets*/
-socket.on('banRealTime', function(data){
-	if (userData.login == data) {
+ var banChannel = socket.subscribe('banRealTime');
+
+ banChannel.on('subscribeFail', function(err) {  
+    console.log('Failed to subscribe to Yell channel due to error: ' + err);
+ });
+
+ banChannel.watch(function (data) {  
+    if (userData.login == data) {
 		alert('Тишину поймали!');
 		location.reload();
 	}
-});
+ });
 
-socket.on('banCancelRealTime', function(data){
-	if (userData.login == data) {
+ var banCancelChannel = socket.subscribe('banCancelRealTime');
+
+ banCancelChannel.on('subscribeFail', function(err) {  
+    console.log('Failed to subscribe to Yell channel due to error: ' + err);
+ });
+
+ banCancelChannel.watch(function (data) {  
+   if (userData.login == data) {
 		alert('Пошуми, бл#ть!');
 		location.reload();
 	}
-});
+ });
 
 socket.on('banSuccess', function(data){
 	alert(data + " забанен!");
@@ -91,22 +103,29 @@ socket.on("emailInvalid", function(data){
 });
 
 /*message sckets*/
-socket.on('messageSentRealTime', function(data, data2){   /*разделил прием сообщения из архива и в реальном времени, т.к. они располагаются в разном порядке. В реальном добавляются ПЕРЕД существующими*/
-	var template = Handlebars.compile( $('#realTimeMessage').html() );
+
+ var chatChannel = socket.subscribe('yell');
+
+ chatChannel.on('subscribeFail', function(err) {  
+    console.log('Failed to subscribe to Yell channel due to error: ' + err);
+ });
+
+ chatChannel.watch(function (data) {  
+    var template = Handlebars.compile( $('#realTimeMessage').html() );
 	data.isModeratorView = userData.isModerator;
 	$('#messagesReceived').prepend( template(data) );
-});
+ });
 
 
 /*like sockets*/
-socket.on('newPlus', function(data, like){
-	var fff = '[data-propose = "' + data + '"]';
-	$(fff).find('.proposePlus').html('<strong>[' + like + ']</strong> - <span class="glyphicon glyphicon-thumbs-up"></span>');
+socket.on('newPlus', function(data){
+	var fff = '[data-propose = "' + data.propose + '"]';
+	$(fff).find('.proposePlus').html('<strong>[' + data.likes + ']</strong> - <span class="glyphicon glyphicon-thumbs-up"></span>');
 });
 
-socket.on('newNewsLike', function(data, like){
-	var fff = '[data-newskey = "' + data + '"]';
-	$(fff).find('strong').html('[' + like + ']');
+socket.on('newNewsLike', function(data){
+	var fff = '[data-newskey = "' + data.newsID + '"]';
+	$(fff).find('strong').html('[' + data.likesNew + ']');
 });
 
 /*banlist sockets*/

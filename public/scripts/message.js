@@ -5,9 +5,8 @@ function startMessage(){
 		$("#messageForm").submit(function(e){
 			var message = $("#message").val();
 			var messageNick = userData.login;
-			var messageData = {messageNick: messageNick, message: message, _id: userData._id, avatarUrl: userData.avatarUrl};
-			var sessionData = {session: document.cookie};
-			socket.emit('message', messageData, sessionData);
+			var messageData = {messageNick: messageNick, message: message, _id: userData._id, avatarUrl: userData.avatarUrl, session: document.cookie};
+			socket.emit('messageSent', messageData);
 			$("#message").val('');
 			userData.activity++;
 			return false;

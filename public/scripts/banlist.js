@@ -64,9 +64,9 @@ function shortPagination() {
 }
 
 function banAuthor(messageClicked){
-	var confirmData = {_id: userData._id, session: document.cookie};
 	var messageNickToBan = messageClicked.prev().prev().attr('data-messagenick');
-	socket.emit('banAuthor', messageNickToBan, confirmData);
+	var banData = {_id: userData._id, session: document.cookie, messageNickToBan: messageNickToBan};
+	socket.emit('banAuthor', banData);
 }
 
 	

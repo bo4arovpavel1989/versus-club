@@ -57,8 +57,7 @@ function changeVote() {
 	var battle1 = prompt("Первый вариант", 'no battle');
 	var battle2 = prompt("Второй вариант", 'no battle');
 	var battle3 = prompt("Третий вариант", 'no battle');
-	var battlers = {first: battle1, second: battle2, third: battle3};
-	var verificationInfo = {_id: userData._id, session: document.cookie, login: userData.login};
-	socket.emit('changeVote', battlers, verificationInfo);
+	var battlers = {first: battle1, second: battle2, third: battle3, _id: userData._id, session: document.cookie, login: userData.login};
+	socket.emit('changeVote', battlers);
 	location.reload();
 }

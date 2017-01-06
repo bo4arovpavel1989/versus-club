@@ -1,7 +1,9 @@
 $("#banForm").submit(function(e){
 	var banName = $("#nameBan").val();
+	banName = '@' + banName;
 	var confirmData = {_id: userData._id, session: document.cookie};
-	socket.emit('banAuthor', '@' + banName, confirmData);
+	var banData = {_id: userData._id, session: document.cookie, messageNickToBan: banName};
+	socket.emit('banAuthor', banData);
 	$("#nameBan").val('');
 	return false;
 });

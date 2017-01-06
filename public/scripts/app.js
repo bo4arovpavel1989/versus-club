@@ -2,9 +2,10 @@
 		var userData = {}; /*пользовательские данные*/
 		var loggedIn = false; /*переменная проверяет совершен ли аторизованный вход в систему*/
 		var loginButtonClicked = false;
-		var ipServer = 'http://109.120.138.53:8080'
+		var ipServer = 'http://109.120.138.53:8080';
 		var ACTIVITY = 4; /*minimum ativity to get access to proposalForm*/
-		var socket = io.connect(ipServer);;
+		//var socket = io.connect(ipServer);;
+		var socket = socketCluster.connect(8080);
 		var session;
 		
 $( document ).ready(function() {

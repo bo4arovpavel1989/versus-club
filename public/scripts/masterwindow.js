@@ -1,15 +1,15 @@
 $("#makeEditorForm").submit(function(e){
 	var editorName = $("#nameEditor").val();
-	var confirmData = {_id: userData._id, session: document.cookie};
-	socket.emit('makeEditor', editorName, confirmData);
+	var masterData = {_id: userData._id, session: document.cookie, editorName: editorName};
+	socket.emit('makeEditor', masterData);
 	$("#nameEditor").val('');
 	return false;
 });
 
 $("#makeModeratorForm").submit(function(e){
 	var moderatorName = $("#nameModerator").val();
-	var confirmData = {_id: userData._id, session: document.cookie};
-	socket.emit('makeModerator', moderatorName, confirmData);
+	var masterData = {_id: userData._id, session: document.cookie, moderatorName: moderatorName};
+	socket.emit('makeModerator', masterData);
 	$("#nameModerator").val('');
 	return false;
 });
