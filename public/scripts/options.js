@@ -1,3 +1,35 @@
+$(document).ready(function(){
+	
+	$("#changeUserDataForm").submit(function(e){
+		var oldPass = $("#inputOldPass").val();
+		var newPass = $("#inputPasswordChange2").val();
+		var dataToChange = new SocketData();
+		dataToChange.pass = oldPass;
+		dataToChange.newpass = newPass;	
+		socket.emit('changeUserData', dataToChange);
+		return false;
+	});	
+	
+	$("#changeUserEmailForm").submit(function(e){
+		var newEmail = $("#inputNewEmail").val();
+		//var dataToChange = {_id: userData._id, email: newEmail, session: document.cookie};
+		var dataToChange = new SocketData();
+		dataToChange.email = newEmail;
+		socket.emit('changeUserEmail', dataToChange);
+		return false;
+	});
+	
+});
+
+function checkPasswords() {
+	var passl = document.getElementById("inputPasswordChange1");
+	var pass2 = document.getElementById("inputPasswordChange2");
+	if(passl.value != pass2.value)
+		passl.setCustomValidity("Пароли  не совпадают. Пожалуйста, проверьте  идентичность паролей в обоих полях!");
+	else
+	passl.setCustomValidity("");
+}	
+
 $(function(){
 			var progressBar = $('.progress-bar');
 				$('#uploadAvatar').on('submit', function(e){
@@ -43,4 +75,4 @@ $(function(){
 				if(progressBar.attr('aria-valuenow') == '100') {
 					$('.progress').hide();
 				}
-		});
+		});	

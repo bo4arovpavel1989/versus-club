@@ -2,6 +2,14 @@
 var isModeratorWindowOpened = false;
 var numberOfPages;
 startPersonCab();
+session = document.cookie;
+
+ function SocketData() {
+	 this._id = userData._id;
+	 this.session = session;
+ }
+ 
+ 
 /*var screenPosition; для старой версии - когда все предложки перезагружаются после лайка*/
 
 function startPersonCab() {

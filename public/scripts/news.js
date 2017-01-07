@@ -42,7 +42,9 @@ function getMoreNews() {
 
 function likeNews(clicked){
 	var newsIdToLike = $(clicked).parent().attr('data-newskey');
-	var likeData = {newsID: newsIdToLike, _id: userData._id, session: document.cookie};
+	//var likeData = {newsID: newsIdToLike, _id: userData._id, session: document.cookie};
+	var likeData = new SocketData();
+	likeData.newsID = newsIdToLike;
 	socket.emit('likeNews', likeData);
 	$(clicked).remove();
 }
@@ -52,15 +54,22 @@ function deleteNews(newsClicked){
 	var confirmDelete = confirm('Уверен?');
 	if (confirmDelete) {
 		var newsToDelete = newsClicked.parent().attr('data-newskey');
-		var deleteData = {newsID: newsToDelete, _id: userData._id, session: document.cookie};
+		//var deleteData = {newsID: newsToDelete, _id: userData._id, session: document.cookie};
+		var deleteData = new SocketData();
+		deleteData.newsID = newsToDelete;
 		socket.emit('deleteNews', deleteData);
+		newsClicked.parent().next().remove();
+		newsClicked.parent().remove();
 		newsClicked.prev().remove();
 		newsClicked.remove();
 	}
 }
 
 function deleteComment(comment, commentCount, id){
-	var deleteData = {commentCount: commentCount, _newsID: id, _userID: userData._id, session: document.cookie};
+	//var deleteData = {commentCount: commentCount, _newsID: id, _userID: userData._id, session: document.cookie};
+	var deleteData = new SocketData();
+	deleteData.commentCount = commentCount;
+	deleteData._newsID = id;
 	socket.emit('deleteComment', deleteData);
 	$(comment).parent().remove();
 }

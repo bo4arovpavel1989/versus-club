@@ -41,21 +41,6 @@ $( document ).ready(function() {
 		$("#inputForgotLogin").val('');
 		return false;
 	});
-
-	$("#changeUserEmailForm").submit(function(e){
-		var newEmail = $("#inputNewEmail").val();
-		var dataToChange = {_id: userData._id, email: newEmail, session: document.cookie};
-		socket.emit('changeUserEmail', dataToChange);
-		return false;
-	});
-
-	$("#changeUserDataForm").submit(function(e){
-		var oldPass = $("#inputOldPass").val();
-		var newPass = $("#inputPasswordChange2").val();
-		var dataToChange = {_id: userData._id, pass: oldPass, newpass: newPass, session: document.cookie};
-		socket.emit('changeUserData', dataToChange);
-		return false;
-	});	
 			
 	/*кнопка наверх*/
 	$('#scrollup img').click( function(){

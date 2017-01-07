@@ -1,6 +1,8 @@
 $("#makeEditorForm").submit(function(e){
 	var editorName = $("#nameEditor").val();
-	var masterData = {_id: userData._id, session: document.cookie, editorName: editorName};
+	//var masterData = {_id: userData._id, session: document.cookie, editorName: editorName};
+	var masterData = new SocketData();
+	masterData.editorName = editorName;
 	socket.emit('makeEditor', masterData);
 	$("#nameEditor").val('');
 	return false;
@@ -8,7 +10,9 @@ $("#makeEditorForm").submit(function(e){
 
 $("#makeModeratorForm").submit(function(e){
 	var moderatorName = $("#nameModerator").val();
-	var masterData = {_id: userData._id, session: document.cookie, moderatorName: moderatorName};
+	//var masterData = {_id: userData._id, session: document.cookie, moderatorName: moderatorName};
+	var masterData = new SocketData();
+	masterData.moderatorName = moderatorName;
 	socket.emit('makeModerator', masterData);
 	$("#nameModerator").val('');
 	return false;

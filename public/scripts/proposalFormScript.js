@@ -6,7 +6,11 @@ function startProposalFormScript(){
 			if (!userData.isBanned) {
 				var propose1 = $("#inputPropose1").val();
 				var propose2 = $("#inputPropose2").val();
-				var proposalData = {login: userData.login, _id: userData._id, propose1: propose1, propose2: propose2, session: document.cookie};
+				//var proposalData = {login: userData.login, _id: userData._id, propose1: propose1, propose2: propose2, session: document.cookie};
+				var proposalData = new SocketData();
+				proposalData.login = userData.login;
+				proposalData.propose1 = propose1;
+				proposalData.propose2 = propose2;
 				socket.emit('proposeUpload', proposalData);
 				$("#inputPropose1").val('');
 				$("#inputPropose2").val('');

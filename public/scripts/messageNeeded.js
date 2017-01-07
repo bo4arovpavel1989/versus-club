@@ -27,7 +27,9 @@ function deleteMessage(messageClicked){
 	var confirmAction = confirm('Уверен?');
 	if (confirmAction) {
 		var messageIDToDelete = messageClicked.prev().attr('data-messageID');
-		var deleteData = {_id: userData._id, session: document.cookie, messageID: messageIDToDelete};
+		//var deleteData = {_id: userData._id, session: document.cookie, messageID: messageIDToDelete};
+		var deleteData = new SocketData();
+		deleteData.messageID = messageIDToDelete;
 		socket.emit('deleteMessage', deleteData);
 		messageClicked.prev().remove();
 		messageClicked.next().remove();
@@ -37,7 +39,9 @@ function deleteMessage(messageClicked){
 
 function banAuthor(messageClicked){
 	var messageNickToBan = messageClicked.prev().prev().attr('data-messagenick');
-	var banData = {_id: userData._id, session: document.cookie, messageNickToBan: messageNickToBan};
+	//var banData = {_id: userData._id, session: document.cookie, messageNickToBan: messageNickToBan};
+	var banData = new SocketData();
+	banData.messageNickToBan = messageNickToBan;
 	socket.emit('banAuthor', banData);
 }
 
