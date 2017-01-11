@@ -10,6 +10,7 @@ function startMessage(){
 			messageData.messageNick = messageNick;
 			messageData.message = message;
 			messageData.avatarUrl = userData.avatarUrl;
+			console.log(messageData);
 			socket.emit('messageSent', messageData);
 			$("#message").val('');
 			userData.activity++;

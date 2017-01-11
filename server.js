@@ -30,6 +30,6 @@ scServer.on('connection', function(client){
 router(app);
 
 
-server.listen(8080);
+server.listen(80);
 
 
