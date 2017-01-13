@@ -86,6 +86,28 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#750606', end
 	margin-top: 40px;
 }
 
+#changevoteForm {
+	 position: fixed!important;
+    bottom: 15px; /* Положение от нижнего края */
+    right: 10%; 
+    display: block;
+    overflow: hidden;
+	width: 80%;
+	border-top: 2.5px ridge blue;
+	border-left: 2.5px ridge blue;
+	border-radius: 8px;
+	color: white;
+	background: rgba(8,8,8,1);
+	background: -moz-linear-gradient(-45deg, rgba(8,8,8,1) 0%, rgba(189,50,32,1) 46%, rgba(246,41,12,1) 65%, rgba(240,47,23,1) 91%, rgba(231,56,39,1) 100%);
+	background: -webkit-gradient(left top, right bottom, color-stop(0%, rgba(8,8,8,1)), color-stop(46%, rgba(189,50,32,1)), color-stop(65%, rgba(246,41,12,1)), color-stop(91%, rgba(240,47,23,1)), color-stop(100%, rgba(231,56,39,1)));	
+	background: -webkit-linear-gradient(-45deg, rgba(8,8,8,1) 0%, rgba(189,50,32,1) 46%, rgba(246,41,12,1) 65%, rgba(240,47,23,1) 91%, rgba(231,56,39,1) 100%);
+	background: -o-linear-gradient(-45deg, rgba(8,8,8,1) 0%, rgba(189,50,32,1) 46%, rgba(246,41,12,1) 65%, rgba(240,47,23,1) 91%, rgba(231,56,39,1) 100%);
+	background: -ms-linear-gradient(-45deg, rgba(8,8,8,1) 0%, rgba(189,50,32,1) 46%, rgba(246,41,12,1) 65%, rgba(240,47,23,1) 91%, rgba(231,56,39,1) 100%);
+	background: linear-gradient(135deg, rgba(8,8,8,1) 0%, rgba(189,50,32,1) 46%, rgba(246,41,12,1) 65%, rgba(240,47,23,1) 91%, rgba(231,56,39,1) 100%);
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#080808', endColorstr='#e73827', GradientType=1 );
+	opacity: 0.9;
+}
+
 #moderatorWindow {
 	 position: fixed!important;
     bottom: 15px; /* Положение от нижнего края */
