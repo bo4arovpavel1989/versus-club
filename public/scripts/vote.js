@@ -61,14 +61,11 @@ function clearVote() {
 }
 
 function changeVote() {
-	var battle1 = prompt("Первый вариант", 'no battle');
-	var battle2 = prompt("Второй вариант", 'no battle');
-	var battle3 = prompt("Третий вариант", 'no battle');
-	//var battlers = {first: battle1, second: battle2, third: battle3, _id: userData._id, session: document.cookie, login: userData.login};
-	var battlers = new SocketData();
-	battlers.first = battle1;
-	battlers.second = battle2;
-	battlers.third = battle3;
-	battlers.login = userData.login;
-	socket.emit('changeVote', battlers);
+	$.ajax({
+					url: "../views/changevoteform.html",
+					success: function(html){
+						$("#forMessageWindow").append(html);
+						$('#changevoteForm').show(600);
+					}
+				});
 }
