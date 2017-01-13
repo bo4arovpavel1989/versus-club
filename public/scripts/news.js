@@ -6,7 +6,7 @@ function startNews(){
 
 		if (userData.isEditor) {
 		$.ajax({
-						url: "../views/newsForm.html",
+						url: "../views/newsform.html",
 						success: function(html){
 							$("#newsFormToLoad").append(html);
 						}

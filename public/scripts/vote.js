@@ -23,7 +23,7 @@ function submitFormHandler() {
 			voteData.votedLogin = userData.login;
 			voteData.vote = a;
 			socket.emit('vote', voteData);
-			getVotes();
+			getVotes();	
 			return false;
 		});
 }
@@ -49,12 +49,14 @@ function clearVote() {
 	var verificationInfo = new SocketData();
 	verificationInfo.login = userData.login;
 	if(confirmAction) {
-		socket.emit('clearvote', verificationInfo);
 		confirmAction = confirm('Создать новое голосование?');
 		if (confirmAction) {
 			changeVote();
+		} else {
+			socket.emit('clearvote', verificationInfo);
+			location.reload();
 		}
-		location.reload();
+			
 	}
 }
 
@@ -66,8 +68,7 @@ function changeVote() {
 	var battlers = new SocketData();
 	battlers.first = battle1;
 	battlers.second = battle2;
-	battlers.third = battle3
+	battlers.third = battle3;
 	battlers.login = userData.login;
 	socket.emit('changeVote', battlers);
-	location.reload();
 }
