@@ -56,7 +56,6 @@ function clearVote() {
 			socket.emit('clearvote', verificationInfo);
 			location.reload();
 		}
-			
 	}
 }
 
