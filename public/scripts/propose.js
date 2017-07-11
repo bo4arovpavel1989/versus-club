@@ -64,9 +64,9 @@ function clearPropose() {
 }
 
 function banProposeAuthor(proposeClicked){
-	var confirmData = {_id: userData._id, session: document.cookie};
-	var messageNickToBan = proposeClicked.prev().prev().attr('data-proposeLogin');
-	socket.emit('banAuthor', messageNickToBan, confirmData);
+	var confirmData = new SocketData();
+	confirmData.messageNickToBan = proposeClicked.prev().prev().attr('data-proposelogin');
+	socket.emit('banAuthor', confirmData);
 }
 
 function deletePropose(proposeClicked){

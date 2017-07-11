@@ -288,7 +288,6 @@ h1, h2, h3 {
 }
 body {
 	color: #081363;
-	background-image: url('/images/background4.png');
 	background-color: #ADADAD;
 }
 .proposePlus {
@@ -544,8 +543,9 @@ cursor: pointer;
 }
 .parallax_layer--base {
 	transform: translateZ(0) scale(1) !important;
-}
+}*/
+/*
 .parallax_layer--back {
 	transform: translateZ(-1px) scale(2) !important;
-	background-repeat: repeat;
-}*/
+	background-image: url('/images/backgrou
+}

@@ -9,6 +9,11 @@
  <link rel="shortcut icon" href="/images/favicon.png" type="image/png">
 </head>
 <body>
+<div class='parallax'>
+<div class='parallax_group'>
+<div class='parallax_layer parallax_layer--back'>
+</div>
+<div class='parallax-layer parallax_layer--base'>
 <div id='shadow' class='container'>
 <div class="container" id="logo">
 <p></P>
@@ -37,20 +42,14 @@
  </div>
 </form>
 <a class = "pull-right" id='registerLink' style='color:#5F676D;'>Регистрация</a><br>
-<a class = "pull-right" id='forgotLink'style='color:#5F676D;' >Забыл пароль?</a>
- </div>
- <div class="container">
-	<p></p>
-	<p></p>
-	<p></P>
-	<div class="text-center" id="loginMessage">	
-	</div>
+<a class = "pull-right" id='forgotLink'style='color:#5F676D;' >Забыл пароль?</a><br>
+<div id='loginMessage'>
+</div>
  </div>
  <div class = 'container' id="contentToUpload">
  </div>
- <div id="scrollup" >
-		<img alt="Прокрутить вверх" src="/icons/up.png">
-	</div>
+</div>
+</div>
  </div>
 	<script src="/api/jquery2.js"></script>
 	<script src="/api/socketcluster.min.js"></script>
@@ -62,8 +61,12 @@
 		$("#registerLink").attr("href", ipServer + '/register');
 		$("#forgotLink").attr("href", ipServer + '/forgot');
 	</script>
+</div>
+ <div id="scrollup" >
+		<img alt="Прокрутить вверх" src="/icons/up.png">
+	</div>
+
 </body>
-<footer>
-	
+<footer>	
 </footer>
 </html>
