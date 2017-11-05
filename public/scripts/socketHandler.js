@@ -30,6 +30,7 @@ socket.on("loginSuccess", function(data){ /*сервер подтвердил п
 	console.log(data);
 	loggedIn = true;
 	document.cookie = data;
+	setCookie('session', data, {expires: 3600 * 24 *365, path: '/'});
 	session = data;
 	console.log(document.cookie);
 	authorize();

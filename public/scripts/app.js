@@ -11,9 +11,9 @@
 		
 $( document ).ready(function() {
 	
-	if (document.cookie.length > 1) {
-		session = document.cookie;
-			authorize();
+	if (getCookie('session')) {
+		session = getCookie('session');
+		authorize();
 		} else {
 			$('#loginFormToHide').show();
 	}
@@ -60,11 +60,45 @@ $( document ).ready(function() {
 
 
 function authorize() { /*вход в систему после авторизации*/
-		if (document.cookie.length > 1) {
-			console.log(document.cookie);
-			socket.emit('getData', document.cookie);
+		if (getCookie('session')) {
+			socket.emit('getData', getCookie('session'));
 		}
 }
 				
+function getCookie(name) {
+  var matches = document.cookie.match(new RegExp(
+    "(?:^|; )" + name.replace(/([\.$?*|{}\(\)\[\]\\\/\+^])/g, '\\$1') + "=([^;]*)"
+  ));
+  return matches ? decodeURIComponent(matches[1]) : undefined;
+}
 
+function setCookie(name, value, options) {
+  options = options || {};
+  //options.path = '/';
+  var expires = options.expires;
+
+  if (typeof expires == "number" && expires) {
+    var d = new Date();
+    d.setTime(d.getTime() + expires * 1000);
+    expires = options.expires = d;
+  }
+  if (expires && expires.toUTCString) {
+    options.expires = expires.toUTCString();
+  }
+
+  value = encodeURIComponent(value);
+
+  if(getCookie(name)) value = getCookie(name) + ', ' + value;
+  
+  var updatedCookie = name + "=" + value;
+
+  for (var propName in options) {
+    updatedCookie += "; " + propName;
+    var propValue = options[propName];
+    if (propValue !== true) {
+      updatedCookie += "=" + propValue;
+    }
+  }
+  document.cookie = updatedCookie;
+}
 

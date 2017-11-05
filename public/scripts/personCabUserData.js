@@ -2,7 +2,7 @@
 var isModeratorWindowOpened = false;
 var numberOfPages;
 startPersonCab();
-session = document.cookie;
+session = getCookie('session');
 
 function SocketData() {
 	 this._id = userData._id;
