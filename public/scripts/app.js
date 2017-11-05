@@ -61,6 +61,7 @@ $( document ).ready(function() {
 
 function authorize() { /*вход в систему после авторизации*/
 		if (document.cookie.length > 1) {
+			console.log(document.cookie);
 			socket.emit('getData', document.cookie);
 		}
 }

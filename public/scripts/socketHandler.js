@@ -27,9 +27,11 @@ socket.on("loginFailed", function(){
 
 socket.on("loginSuccess", function(data){ /*сервер подтвердил правильность логина и пароля*/
 	$("#loginMessage").empty();
+	console.log(data);
 	loggedIn = true;
 	document.cookie = data;
 	session = data;
+	console.log(document.cookie);
 	authorize();
 });
 
