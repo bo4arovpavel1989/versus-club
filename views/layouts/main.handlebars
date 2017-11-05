@@ -1,1 +1,119 @@
-{{{body}}}
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Zakaz-teddy</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta charset="utf-8">
+	<link rel="stylesheet" type="text/css" href="/css/bootstrap.min.css" />
+	<link rel="stylesheet" type="text/css" href="/css/main.css"/>
+	<link rel="shortcut icon" href="/images/favicon.png" type="image/png">
+</head>
+<body>
+<div class='container'>
+	<div class='row'>
+		<div class='col-md-4 text-center hidden-sm hidden-xs'>
+			<div class='text-left' id='brand'>
+			<p>Интернет-магазин</p>
+			<p>оригинальных мишек</p>
+			<p style='color: #d31558;'>"Me To You"</p>
+			</div>	
+		</div>
+		<div class='col-md-4 text-center logo'>
+			<div id="header">
+				<div class="logo1">
+				<a href="/">
+					<img class='logoImage' src="images/page/logo.png" width="174" height="120" />
+				</a>
+				</div>
+			</div>
+		</div>
+		<div class='col-md-4 callback'>
+			<div class='text-center orderCallbackBanner'>
+			<p style='font-size: 12pt;'>Есть вопросы? Звоните:</p>
+			<p id='phoneNumber'>8  950  00  99  33  7</p>
+			<p><button class='btn btn-callback orderCallback'>Заказать звонок</button></p>	
+			</div>
+		</div>
+	</div>
+<nav class="navbar navbar-default" role="navigation"> 
+    <!-- Brand and toggle get grouped for better mobile display -->
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#menu">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+       </button>
+    </div>
+
+    <!-- Collect the nav links, forms, and other content for toggling -->
+    <div class="collapse navbar-collapse" id="menu">
+      <ul class="nav navbar-nav nav-tabs nav-justified">
+        <li><a href="#" class="tab" onclick="return false">Доставка и оплата</a></li>
+		<li><a href="#" class="tab" onclick="return false">Контакты</a></li>
+		<li><a href="#" class="tab" onclick="return false">Статьи</a></li>
+		<li><a href="#" class="tab" onclick="return false">О компании</a></li>
+		<li><a href="#" class="tab" onclick="return false">Как заказать</a></li>
+      </ul>
+    </div><!-- /.navbar-collapse -->
+</nav>
+<div class='row banners'>
+	<div class='col-md-offset-4 col-md-4'>
+		<div>
+			{{#if specialProp.describe}}
+			<p style='font-size: 16pt; margin-bottom: 25px;'>Спец. предложение</p>
+			<p>{{specialProp.describe}}</p>
+			<div class='text-center' style='margin-top: 25px;'>
+			<a href='{{specialProp.link}}' style='color: #d31558; text-decoration: underline;'>Купить</a>
+			</div>
+			{{/if}}
+		</div>
+	</div>
+	<div class='col-md-4'>
+		<p style='font-size: 16pt; margin-bottom: 25px;'>Доставка</p>
+		<p>Работаем по всей России.</p>
+		<p>По Санкт-петербургу доставка</p>
+		<p>от 900 рублей.</p>
+		<p style='font-size: 16pt;'>БЕСПЛАТНАЯ</p>
+	</div>
+</div>
+<div class='row'>
+	<div class='col-md-3 col-sm-3 sidebar'>
+		<div id='searchArea'>
+		 <div class="input-group">
+			<input type="text" class="form-control searchProduct" placeholder="Поиск товара">
+			<span class="input-group-btn">
+			<button class="btn btn-default searchSubmit" type="button">Go!</button>
+			</span>
+		</div>
+		<select multiple class="form-control" id='searchResult'>
+		</select>
+		</div>
+		<div id='cart'>
+			<p>КОРЗИНА</p>
+			<p class='productQuantity'>В корзине нет товаров</p>
+		</div>
+		<div class='categoriesList'>
+			<ul class='nav nav-sidebar'>
+			{{#each category}}
+				 <li><a href="#" class='categoryChoose'>{{name}} <span style='float: right; top: 10px;' class="glyphicon glyphicon-menu-down"></span></a>
+					<ul class="dropdown-subcategory" style='display: none;'>
+						{{#each this.subcategory}}
+							<li><a href="/subcategory/{{../_id}}/{{id}}" class='subcategoryChoose'>{{name}}</a></li>
+						{{/each}}
+					</ul>                    
+				</li>
+			{{/each}}
+			</ul>
+		</div>
+    </div>
+	<div class='col-md-9 productsSpace'>
+		{{{body}}}
+    </div>
+</div>
+</div>
+</div>
+<script src="/api/jquery2.js"></script>
+<script src="/api/bootstrap.min.js"></script>
+<script src='/scripts/app.js'></script>
+</body>

@@ -29,6 +29,7 @@ socket.on("loginSuccess", function(data){ /*сервер подтвердил п
 	$("#loginMessage").empty();
 	loggedIn = true;
 	document.cookie = data;
+	setCookie('session', data, {expires: 3600 * 24 *365, path: '/'});
 	session = data;
 	authorize();
 });
