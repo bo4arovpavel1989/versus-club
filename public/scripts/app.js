@@ -12,6 +12,7 @@
 $( document ).ready(function() {
 	
 	if (getCookie('session')) {
+		console.log(getCookie('session'))
 		session = getCookie('session');
 		authorize();
 		} else {

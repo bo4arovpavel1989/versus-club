@@ -17,6 +17,7 @@ socket.on('invalidSession', function(){
 });
 
 socket.on("loginFailed", function(){
+	console.log('login falied')
 	$('#loginFormToHide').show();
 	$("#loginMessage").empty();
 	$("#loginMessage").append("<div class='alert alert-danger'><strong>Ошибка!</strong> Неверное имя пользователя или пароль.</div>");
@@ -29,7 +30,6 @@ socket.on("loginSuccess", function(data){ /*сервер подтвердил п
 	$("#loginMessage").empty();
 	console.log(data);
 	loggedIn = true;
-	document.cookie = data;
 	setCookie('session', data, {expires: 3600 * 24 *365, path: '/'});
 	session = data;
 	console.log(document.cookie);
