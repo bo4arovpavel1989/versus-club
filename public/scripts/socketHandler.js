@@ -58,29 +58,13 @@ socket.on('changeUserdataFailed', function(){
 /*userbans sockets*/
  var banChannel = socket.subscribe('banRealTime');
 
- banChannel.on('subscribeFail', function(err) {  
-    console.log('Failed to subscribe to Yell channel due to error: ' + err);
- });
+socket.on('banRealTime',function(){
+	userData.isBanned=true;
+});
 
- banChannel.watch(function (data) {  
-    if (userData.login == data) {
-		alert('Тишину поймали!');
-		location.reload();
-	}
- });
-
- var banCancelChannel = socket.subscribe('banCancelRealTime');
-
- banCancelChannel.on('subscribeFail', function(err) {  
-    console.log('Failed to subscribe to Yell channel due to error: ' + err);
- });
-
- banCancelChannel.watch(function (data) {  
-   if (userData.login == data) {
-		alert('Пошуми, бл#ть!');
-		location.reload();
-	}
- });
+socket.on('banCancelRealTime',function()
+	userData.isBanned=false;
+{});
 
 socket.on('banSuccess', function(data){
 	alert(data + " забанен!");
