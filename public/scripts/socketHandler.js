@@ -60,11 +60,15 @@ socket.on('changeUserdataFailed', function(){
 
 socket.on('banRealTime',function(){
 	userData.isBanned=true;
+	alert('U r banned,bitch!');
+	location.reload();
 });
 
-socket.on('banCancelRealTime',function()
+socket.on('banCancelRealTime',function(){
 	userData.isBanned=false;
-{});
+	alert('Make sum fukin noiz!');
+	location.reload();
+});
 
 socket.on('banSuccess', function(data){
 	alert(data + " забанен!");
