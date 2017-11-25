@@ -4,6 +4,12 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
  <meta charset="utf-8">
 <link rel="stylesheet" type="text/css" href="/css/bootstrap.min.css" />
+	<script src="/api/jquery2.js"></script>
+	<script src="/api/socketcluster.min.js"></script>
+	<script src="/scripts/app.js"></script>
+	<script src="/scripts/personCabUserData.js"></script>
+	<script src='/scripts/options.js'></script>
+	<script src="/scripts/socketHandler.js"></script>
 </head>
 <body>
 <div class="container">
@@ -87,17 +93,15 @@
 	</div>
  </form>
 </div>
-	<script src="/api/jquery2.js"></script>
-	<script src="/api/socketcluster.min.js"></script>
-	<script src="/scripts/app.js"></script>
-	<script src="/scripts/personCabUserData.js"></script>
-	<script src='/scripts/options.js'></script>
-	<script src="/scripts/socketHandler.js"></script>
 	<script>
+	(function(window){
+		var socket = window.socket;
 		socket.on('takeData', function(data){
+			var userData = window.userData;
 			$('#sessionforavatar').val(document.cookie);
 			$('#idforavatar').val(userData._id);
 		});
+	})(window);	
 	</script>
 </html>
 </body>

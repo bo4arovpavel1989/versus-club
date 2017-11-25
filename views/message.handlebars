@@ -8,7 +8,7 @@
 	<div class='avatarMessage' style='background-image: url({{avatarUrl}})'></div>
 	<blockquote class='messagebody'>{{message}}</blockquote></li>
 	{{#if isModeratorView}}
-		<a href='#' class='deleteMessage' onclick='deleteMessage($(this)); return false;'>удалить</a> 
-		<a href='#' class='banAuthor' onclick='banAuthor($(this)); return false;'>бан/разбан</a>
+		<a href='#' class='deleteMessage' onclick='window.deleteMessage($(this)); return false;'>удалить</a> 
+		<a href='#' class='banAuthor' onclick='window.banAuthor($(this)); return false;'>бан/разбан</a>
 	{{/if}}
 	{{/each}}

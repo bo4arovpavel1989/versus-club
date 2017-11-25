@@ -4,7 +4,7 @@
 	<div class='commentItem' data-commentCount={{commentCount}}>
 		{{login}}: {{comment}}
 	{{#if isModeratorView}}
-		<a href='#' class='deleteMessage' onclick='deleteComment($(this), {{commentCount}}, "{{id}}"); return false;'>удалить</a>
+		<a href='#' class='deleteMessage' onclick='window.deleteComment($(this), {{commentCount}}, "{{id}}"); return false;'>удалить</a>
 	{{/if}}
 	</div>
 {{/if}}	

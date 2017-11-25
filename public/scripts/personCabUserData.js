@@ -57,7 +57,7 @@
 
 
 
-	function menuSticky() {
+	window.menuSticky = function() {
 		var closeWindowPositionY = document.querySelector('.navbar').offsetTop;
 		$(window).scroll(function(){										
 			if(window.scrollY > closeWindowPositionY) {
@@ -71,7 +71,7 @@
 		});
 	}
 
-	function appealTo(nickClicked) {
+	window.appealTo = function (nickClicked) {
 		$('#messageWindow').addClass('activeWindow');
 		 if($('#messageForm').hasClass('hiddenwindow')) {
 			$('#messageForm').removeClass('hiddenwindow');
@@ -87,7 +87,7 @@
 
 	}
 
-	function masterWindow() {
+	window.masterWindow = function() {
 		if (!isMasterWindowOpened) {
 		isMasterWindowOpened = true;	
 		$.ajax({
@@ -100,7 +100,7 @@
 		}
 	}
 
-	function moderatorWindow() {
+	window.moderatorWindow = function() {
 		if (!isModeratorWindowOpened) {
 		isModeratorWindowOpened = true;	
 		$.ajax({

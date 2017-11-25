@@ -23,11 +23,14 @@
 	</div>
  </form>
  <script>
- $('#inputNewsTitle').keypress(function(key) { /*protect from symbols ' and " in username, because it caueses troubles*/
+ (function(window){
+	var userData = window.userData;
+	$('#inputNewsTitle').keypress(function(key) { /*protect from symbols ' and " in username, because it caueses troubles*/
         if(key.charCode < 48 && key.charCode > 33 ) {
 			return false;
 		}
     });
 	$('#sessionfornews').val(document.cookie);
 	$('#idfornews').val(userData._id);
+})(window);	
  </script>
