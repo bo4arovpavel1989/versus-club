@@ -4,6 +4,7 @@
 	var loginButtonClicked = window.loginButtonClicked;
 	var SocketData=window.SocketData;
 	var socket = window.socket;
+	var authorize = window.authorize;
 	/*authentific sockets*/
 	socket.on('takeData', function(data){
 		loggedIn = true;

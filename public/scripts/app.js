@@ -7,11 +7,19 @@
 	var PORT = 80;
 	var ACTIVITY = 4; /*minimum ativity to get access to proposalForm*/
 	window.ACTIVITY = ACTIVITY;
+	
 	//var socket = io.connect(ipServer);;
 	var socket = socketCluster.connect(PORT);
 	window.socket = socket;
 	var session;
-		
+	
+	var authorize = function () { /*вход в систему после авторизации*/
+			if (getCookie('session')) {
+				socket.emit('getData', getCookie('session'));
+			}
+	};	
+	window.authorize = authorize;
+	
 	$( document ).ready(function() {
 		if (getCookie('session')) {
 			console.log(getCookie('session'))
@@ -62,15 +70,6 @@
 		});
 							
 	});
-
-
-	function authorize() { /*вход в систему после авторизации*/
-			if (getCookie('session')) {
-				socket.emit('getData', getCookie('session'));
-			}
-	}
-					
-
 })(window);
 
 	function getCookie(name) {
