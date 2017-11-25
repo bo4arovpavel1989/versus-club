@@ -58,8 +58,11 @@
 </div>
  </div>
 	<script>
+	(function(window){
+		var ipServer = window.ipServer;
 		$("#registerLink").attr("href", ipServer + '/register');
 		$("#forgotLink").attr("href", ipServer + '/forgot');
+	})(window);	
 	</script>
 </div>
  <div id="scrollup" >

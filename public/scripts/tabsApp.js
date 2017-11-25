@@ -24,7 +24,7 @@
 								$('.loader').removeClass('loading');
 								$("#tabsData").append(html);
 								$(".navbar-collapse").removeClass("in");
-								menuSticky();
+								window.menuSticky();
 							}
 				});
 			}			

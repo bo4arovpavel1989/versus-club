@@ -22,7 +22,7 @@
 	}
 
 
-	fwindow.getMoreMessages = function() {
+	window.getMoreMessages = function() {
 		emitCounter = emitCounter + 11;
 		getMessages();
 	}
