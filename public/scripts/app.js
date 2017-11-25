@@ -70,6 +70,9 @@
 			}
 	}
 					
+
+})(window);
+
 	function getCookie(name) {
 	  var matches = document.cookie.match(new RegExp(
 		"(?:^|; )" + name.replace(/([\.$?*|{}\(\)\[\]\\\/\+^])/g, '\\$1') + "=([^;]*)"
@@ -105,6 +108,4 @@
 		}
 	  }
 	  document.cookie = updatedCookie;
-	  window.userData = userData;
 	}
-})(window);

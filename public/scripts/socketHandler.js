@@ -8,6 +8,7 @@
 	socket.on('takeData', function(data){
 		loggedIn = true;
 		userData = data;
+		window.userData = data;
 		console.log(userData);
 		$("#loginFormToHide").remove();
 			$.ajax({
