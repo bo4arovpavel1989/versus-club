@@ -2,6 +2,7 @@
 	var userData = window.userData || {};
 	var SocketData=window.SocketData;
 	var socket = window.socket;
+	var loggedIn = window.loggedIn;
 	startVote();
 
 	function startVote(){

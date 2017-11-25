@@ -3,6 +3,7 @@
 	var SocketData=window.SocketData;
 	var ACTIVITY = window.ACTIVITY;
 	var socket = window.socket;
+	var loggedIn = window.loggedIn;
 	startPropose();
 
 	function startPropose(){

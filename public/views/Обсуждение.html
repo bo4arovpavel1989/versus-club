@@ -1,9 +1,9 @@
 ﻿<h3 class='text-center'>Пошумим здесь</h3>
-<a href='#' class="btn btn-primary" onclick="writeMessageButton();">Отправить сообщение</a>
+<a href='#' class="btn btn-primary" onclick="window.writeMessageButton();">Отправить сообщение</a>
 <ul id="messagesReceived">
 </ul>
 <div class='text-center'>
-	<a href='#' class="btn btn-primary" onclick='getMoreMessages(); return false;' style='margin-top: 20px;'>Загрузить еще</a>
+	<a href='#' class="btn btn-primary" onclick='window.getMoreMessages(); return false;' style='margin-top: 20px;'>Загрузить еще</a>
 </div>
 <script src="/scripts/messageNeeded.js"></script>
  <script id="realTimeMessage" type="text/x-handlebars-template">
@@ -16,7 +16,7 @@
 	<div class='avatarMessage' style='background-image: url({{avatarUrl}})'></div>
 	<blockquote class='messagebody'>{{message}}</blockquote></li>
 	{{#if isModeratorView}}
-		<a href='#' class='deleteMessage' onclick='deleteMessage($(this)); return false;'>удалить</a> 
-		<a href='#' class='banAuthor' onclick='banAuthor($(this)); return false;'>бан/разбан</a>
+		<a href='#' class='deleteMessage' onclick='window.deleteMessage($(this)); return false;'>удалить</a> 
+		<a href='#' class='banAuthor' onclick='window.banAuthor($(this)); return false;'>бан/разбан</a>
 	{{/if}}
   </script>
