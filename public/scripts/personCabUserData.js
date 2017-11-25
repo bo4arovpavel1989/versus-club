@@ -1,6 +1,7 @@
 ﻿(function(window){
 	var userData = window.userData || {};
 	var socket = window.socket;
+	var loggedIn = window.loggedIn;
 	var isMasterWindowOpened = false;
 	var isModeratorWindowOpened = false;
 	var numberOfPages;

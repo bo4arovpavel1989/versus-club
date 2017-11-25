@@ -3,6 +3,7 @@
 	var loggedIn = false; /*переменная проверяет совершен ли аторизованный вход в систему*/
 	var loginButtonClicked = false;
 	var ipServer = 'http://109.120.170.187:80';
+	window.ipServer = ipServer;
 	var PORT = 80;
 	var ACTIVITY = 4; /*minimum ativity to get access to proposalForm*/
 	window.ACTIVITY = ACTIVITY;
