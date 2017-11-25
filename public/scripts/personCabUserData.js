@@ -19,7 +19,7 @@
 
 	function startPersonCab() {
 		$(document).ready(function() {
-		   if(loggedIn && !userData.isBanned){ /*если юзер успешно залогинился, приветствуем его и выводим окошко для сообщений*/
+		   if(!userData.isBanned){ /*если юзер успешно залогинился, приветствуем его и выводим окошко для сообщений*/
 			$("#welcome").append("WELCOME " + userData.login + "!");
 			$.ajax({
 							url: "../views/messageWindow.html",

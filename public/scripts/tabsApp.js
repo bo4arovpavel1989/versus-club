@@ -2,6 +2,23 @@
 	var userData = window.userData || {};
 	$(document).ready(function(){
 		
+		var closeTab = function(){
+			$("#tabsData").empty();
+			$('.loader').addClass('loading');
+			$.ajax({
+					url: '../views/crowdfunding.html',
+					success: function(html){
+						$('.loader').removeClass('loading');
+						$("#tabsData").hide();
+						$("#tabsData").addClass('nopadding');
+						$("#tabsData").append(html);
+						$("#tabsData").fadeIn(600);
+					}
+				});
+		}
+		
+		window.closeTab = closeTab;
+		
 		closeTab();
 						
 		if(userData.isModerator) {
@@ -30,20 +47,5 @@
 			}			
 		});
 
-	});				
-
-	function closeTab(){
-		$("#tabsData").empty();
-		$('.loader').addClass('loading');
-		$.ajax({
-				url: '../views/crowdfunding.html',
-				success: function(html){
-					$('.loader').removeClass('loading');
-					$("#tabsData").hide();
-					$("#tabsData").addClass('nopadding');
-					$("#tabsData").append(html);
-					$("#tabsData").fadeIn(600);
-				}
-			});
-	}				
+	});								
 })(window);

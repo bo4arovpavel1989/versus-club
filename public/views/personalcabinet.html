@@ -1,3 +1,4 @@
+<script src="/scripts/personCabUserData.js"></script>
 <div class="container" id='welcomesection'>
 	<a href='#' id='logoff' onclick='return false'>  Выход <span class="glyphicon glyphicon-log-out"></span></a>
 	<a id='options'>Настройки  <span class="glyphicon glyphicon-cog"></span></a>
@@ -7,10 +8,9 @@
 </div>
 <div class="container" id="forMessageWindow">
 </div>
-<script src="/scripts/personCabUserData.js"></script>
 	<script>
 	(function(window){
-		va ipServer = window.ipServer;
+		var ipServer = window.ipServer;
 		$("#options").attr("href", ipServer + '/options');
 	})(window);
 	</script>
