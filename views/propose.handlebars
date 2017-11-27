@@ -1,12 +1,12 @@
 	{{#each propose}}
 		<div class='proposalItem' data-propose='{{propose}}' data-proposelogin={{login}}>Предложена пара на голосование: 
 			<div class='alert alert-info'>{{propose}}</div>
-			<a href='#' class='proposePlus' onclick='lwindow.ikePropose($(this)); return false;'>
+			<a href='#' class='proposePlus' onclick='likePropose($(this)); return false;'>
 				<strong>[{{like}}]</strong> -  <span class='glyphicon glyphicon-thumbs-up'></span>
 			</a>
 		</div>
 	{{#if isModeratorView}}
-		<a href='#' class='deletePropose' onclick='window.deletePropose($(this)); return false;'>удалить</a>
-		<a href='#' class='banAuthor' onclick='window.banProposeAuthor($(this)); return false;'> бан/разбан</a><br>
+		<a href='#' class='deletePropose' onclick='deletePropose($(this)); return false;'>удалить</a>
+		<a href='#' class='banAuthor' onclick='banProposeAuthor($(this)); return false;'> бан/разбан</a><br>
 	{{/if}}
 	{{/each}}	

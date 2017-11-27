@@ -4,12 +4,12 @@
 		<p class= 'newsImage'><img src ={{img}} alt = 'newsimage' width='45%' height='45%'></p>
 		<p class='newsbody'>{{body}}</p> 
 		<strong  style='float: right;'>[{{likes}}]</strong>
-		<a href='#' class='likeNews' onclick='window.likeNews($(this)); return false;' style='float: right; margin-right: 1%;'><span class='glyphicon glyphicon-thumbs-up'></span></a>
+		<a href='#' class='likeNews' onclick='likeNews($(this)); return false;' style='float: right; margin-right: 1%;'><span class='glyphicon glyphicon-thumbs-up'></span></a>
 		{{#if isEditorView}}
-			<a href='#' class='deleteNews' onclick='window.deleteNews($(this)); return false;'><span class='glyphicon glyphicon-trash'></span></a><br>
+			<a href='#' class='deleteNews' onclick='deleteNews($(this)); return false;'><span class='glyphicon glyphicon-trash'></span></a><br>
 		{{/if}}
 	</div>	
 	<div class='text-center commentsSection'>
-		<a href='#' class='showComments' onclick='window.showComments("{{_id}}", $(this)); return false;'>[ПОКАЗАТЬ КОММЕНТАРИИ]</a>
+		<a href='#' class='showComments' onclick='showComments("{{_id}}", $(this)); return false;'>[ПОКАЗАТЬ КОММЕНТАРИИ]</a>
 	</div>	
 {{/each}}
