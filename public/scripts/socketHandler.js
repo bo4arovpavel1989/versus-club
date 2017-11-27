@@ -134,9 +134,11 @@
 				var $a=('<a></a>',{
 					'class':'banListPage',
 					'href':'#',
-					'onclick':''
+					'onclick':'askForBanList($(this));return false'
 				});
-				$('.pagination').append('<li><a href=\'#\' class=\'banListPage\' onclick=\'askForBanList($(this)); return false;\'>' + pageNum + '</a></li>');
+				$a.append(pageNum);
+				$li.append($a);
+				$('.pagination').append($li);
 			}
 			if (numberOfPages > 8) {
 				shortPagination();

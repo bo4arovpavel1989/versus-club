@@ -33,23 +33,7 @@
 		});
 	}
 
-	window.askForBanList(clickedPage) {
-		var pageNumber = clickedPage.html();
-		var banlistUrl = ipServer + '/getbanlist?page=' + pageNumber;	
-		$.ajax({
-				url: banlistUrl,
-				dataType: 'html',
-				success: function(html){
-					$('#banListItems').empty();
-					$('#banListItems').append(html);
-				}
-		});	
-		$('.pagination > .active').removeClass('active');
-		clickedPage.parent().addClass('active');
-		shortPagination();
-	}
-
-	function shortPagination() {
+	var shortPagination = function () {
 		$('.pagination > li:not(.active)').addClass('hiddenPagination');
 		$('.pagination li:first-child').removeClass('hiddenPagination');
 		$('.pagination li:last-child').removeClass('hiddenPagination');
@@ -64,6 +48,24 @@
 		$('.pagination li.hiddenPagination:last-child').before(function(){
 			return '<li>...</li>';
 		});
+	}
+	
+	window.shortPagination = shortPagination;
+	
+	window.askForBanList=function(clickedPage) {
+		var pageNumber = clickedPage.html();
+		var banlistUrl = ipServer + '/getbanlist?page=' + pageNumber;	
+		$.ajax({
+				url: banlistUrl,
+				dataType: 'html',
+				success: function(html){
+					$('#banListItems').empty();
+					$('#banListItems').append(html);
+				}
+		});	
+		$('.pagination > .active').removeClass('active');
+		clickedPage.parent().addClass('active');
+		shortPagination();
 	}
 
 	window.banAuthor = window.banAuthor || function (messageClicked){
