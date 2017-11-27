@@ -43,7 +43,7 @@
 	}
 
 	window.likePropose = function(clickedPropose) {
-			if (userData.isBanned) { /*если авторизован и не забанен то можешь плюсовать*/
+			if (!userData.isBanned) { /*если авторизован и не забанен то можешь плюсовать*/
 				/*screenPosition = window.pageYOffset; старая версия - возврат к положению на странице после перезагрузки*/
 				var proposeItself = clickedPropose.parent().attr("data-propose");
 				//var proposePlusData = {login: userData.login, _id: userData._id, propose: proposeItself, session: document.cookie};
