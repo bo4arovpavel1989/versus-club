@@ -33,7 +33,7 @@
 		});
 	}
 
-	function askForBanList(clickedPage) {
+	window.askForBanList(clickedPage) {
 		var pageNumber = clickedPage.html();
 		var banlistUrl = ipServer + '/getbanlist?page=' + pageNumber;	
 		$.ajax({

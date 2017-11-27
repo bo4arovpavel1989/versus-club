@@ -126,10 +126,16 @@
 	/*banlist sockets*/
 	socket.on('banListCardinality', function(data){
 		if(data !==0) 
-		numberOfPages = data/10; /*banned persons per page*/
+		var numberOfPages = data/10; /*banned persons per page*/
 		numberOfPages = Math.ceil(numberOfPages);
 		if (numberOfPages > 1) {
 			for (var pageNum = 2; pageNum <= numberOfPages; pageNum++) { /*first page always presents, so we start from the second*/
+				var $li=('<li></li>');
+				var $a=('<a></a>',{
+					'class':'banListPage',
+					'href':'#',
+					'onclick':''
+				});
 				$('.pagination').append('<li><a href=\'#\' class=\'banListPage\' onclick=\'askForBanList($(this)); return false;\'>' + pageNum + '</a></li>');
 			}
 			if (numberOfPages > 8) {
