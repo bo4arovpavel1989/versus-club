@@ -30,7 +30,8 @@
 			return false;
 		}
     });
-	$('#sessionfornews').val(document.cookie);
+	var session = getCookie('session')
+	$('#sessionfornews').val(session);
 	$('#idfornews').val(userData._id);
 })(window);	
  </script>
